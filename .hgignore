@@ -1,0 +1,5 @@
+syntax: glob
+xy1450*
+*.bak
+src/*.o
+src/*.bak
