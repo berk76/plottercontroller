@@ -75,8 +75,8 @@ PRINTER *pr_create_printer(char *device_name) {
 	PRINTER *result = (PRINTER *) malloc(sizeof(PRINTER));
 
 	result->parport_fd = fd;
-	result->max_position.x = 1750;
-	result->max_position.y = 2100;
+	result->max_position.x = MAX_X;
+	result->max_position.y = MAX_Y;
 	result->curr_position.x = 0;
 	result->curr_position.y = 0;
 	result->origin_position.x = 0;
@@ -126,6 +126,13 @@ void pr_init(PRINTER *p) {
 }
 
 /*
+*       Returns max position;
+*/
+POSITION pr_get_max_position(PRINTER *p) {
+	return p->max_position;
+}
+
+/*
 *	Returns current position;
 */
 POSITION pr_get_current_position(PRINTER *p) {
@@ -143,10 +150,7 @@ POSITION pr_get_current_position(PRINTER *p) {
 *	Returns origin position;
 */
 POSITION pr_get_origin_position(PRINTER *p) {
-	POSITION result;
-	result.x = p->origin_position.x;
-	result.y = p->origin_position.y;
-	return result;
+	return p->origin_position;
 }
 
 /*
@@ -161,10 +165,7 @@ void pr_set_origin_position(PRINTER *p, int x, int y) {
 *	Returns moving buffer;
 */
 POSITION pr_get_moving_buffer(PRINTER *p) {
-	POSITION result;
-	result.x = p->moving_buffer.x;
-	result.y = p->moving_buffer.y;
-	return result;
+	return p->moving_buffer;
 }
 
 /*

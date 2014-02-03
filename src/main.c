@@ -9,14 +9,14 @@
 #include <math.h>
 #include "printer.h"
 #include "graph.h"
+#include "text.h"
 #include "main.h"
 
 #define DEVICE "/dev/parport0" 
 
 static int show_menu(PRINTER *prn);
-static void vector_test(PRINTER *prn);
-static void circle_test(PRINTER *prn);
 static void cone_demo(PRINTER *prn);
+static void text_demo(PRINTER *prn);
 
 
 int main(int argc, char **argv) {
@@ -36,12 +36,11 @@ int main(int argc, char **argv) {
 
 static int show_menu(PRINTER *prn) {
 	printf("XY-1450 controlling program\n");
-	printf("Build 20140123\n");
+	printf("Build 20140203\n");
 	printf("---------------------------\n\n");
 
-	printf("1) Vector test\n");
-	printf("2) Circle test\n");
-	printf("3) Cone demo\n");
+	printf("1) Cone demo\n");
+	printf("2) Text demo\n");
 	printf("0) Exit\n");
 
 	printf("\n");
@@ -51,56 +50,30 @@ static int show_menu(PRINTER *prn) {
 	while (getchar() != '\n');
 
 	switch (c) {
-		case '1' :	vector_test(prn);
+		case '1' :	cone_demo(prn);
 					break;
-		case '2' :	circle_test(prn);
-					break;	
-		case '3' :	cone_demo(prn);
+		case '2' :	text_demo(prn);
 					break;
 	}
 
 	return c;
 }
 
-static void vector_test(PRINTER *prn) {
- 	pr_init(prn);
-
-	xy_vr(prn, 2600, 0);
-	xy_vr(prn, 0,1850);
-	xy_vr(prn, -2600,0);
-	xy_vr(prn, 0,-1850);
-	xy_vr(prn, 2600,1850);
-	xy_mr(prn, 0,-1850);
-	xy_vr(prn, -2600,1850);
-	xy_hm(prn);
-}
-
-static void circle_test(PRINTER *prn) {
-	pr_init(prn);
-
-	xy_mr(prn, 2600/2, 1850/2);
-	xy_cr(prn, 800);
-	xy_ar(prn, 700, M_PI * 0.25, M_PI * 0.75);
-	xy_ar(prn, 700, M_PI, M_PI * 2);
-	xy_hm(prn);
-}
-
-
 static void cone_demo(PRINTER *prn) {
+	pr_init(prn);
+	POSITION paper = pr_get_max_position(prn);
 
 	int rx = 200;
 	int ry = 600;
 	int h = 1500;
 	int n = 30;
 
-	int cx1 = (2600 - h) / 2;
-	int cy1 = 1850 / 2;
+	int cx1 = (paper.x - h) / 2;
+	int cy1 = paper.y / 2;
 
-	int cx2 = (2600 - h) / 2 + h;
-	int cy2 = 1850 / 2;
+	int cx2 = (paper.x - h) / 2 + h;
+	int cy2 = paper.y / 2;
 	int step = 360 / n;
-
-	pr_init(prn);
 
 	int dir = 0;
 	int i;
@@ -120,5 +93,24 @@ static void cone_demo(PRINTER *prn) {
 		}
 	}
 	
+	xy_hm(prn);
+}
+
+static void text_demo(PRINTER *prn) {
+	pr_init(prn);
+	POSITION paper = pr_get_max_position(prn);
+
+	xy_set_font_size(5);
+
+	int i;
+	for (i = 0; i < 16; i++) {
+		xy_set_text_angle(M_PI * 2 / 16 * i);
+		xy_ma(prn, paper.x / 2, paper.y / 2);
+		xy_write(prn, "    XY1450.WEBSTONES.CZ");
+		//xy_write(prn, "0123456789\n");
+		//xy_ma(prn, 50, 1850 - 200 * 7);
+		//xy_write(prn, "ABCDEFGHIJKLMNOPQRSTUVWXYZ\n");
+	}
+
 	xy_hm(prn);
 }
