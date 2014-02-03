@@ -15,7 +15,7 @@ typedef struct {
 typedef unsigned char DATA;
 
 typedef struct {
-	int			parport_fd;
+	int		parport_fd;
 	POSITION	max_position;
 	POSITION	curr_position;
 	POSITION	origin_position;
@@ -37,6 +37,12 @@ extern void pr_close_printer(PRINTER *p);
 *	Init printer
 */
 extern void pr_init(PRINTER *p);
+
+/*
+*       Returns max position;
+*/
+extern POSITION pr_get_max_position(PRINTER *p);
+
 
 /*
 *	Returns current position;
