@@ -45,8 +45,6 @@ void xy_set_text_angle(double angle) {
 
 /* Write text */
 void xy_write(PRINTER *p, char *text) {
-	printf("Writting text (%s)\n", text);
-
 	if (load_font(FONT_DEFINITION_FILE) != 0) {
 		return;
 	}
@@ -195,4 +193,3 @@ static free_font(void) {
 	free((void *) font);
 	font = NULL;
 }
-

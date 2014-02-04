@@ -16,6 +16,7 @@
 
 static int show_menu(PRINTER *prn);
 static void cone_demo(PRINTER *prn);
+static void circles_demo(PRINTER *prn);
 static void text_demo(PRINTER *prn);
 
 
@@ -36,11 +37,12 @@ int main(int argc, char **argv) {
 
 static int show_menu(PRINTER *prn) {
 	printf("XY-1450 controlling program\n");
-	printf("Build 20140203\n");
+	printf("Build 20140204\n");
 	printf("---------------------------\n\n");
 
-	printf("1) Cone demo\n");
-	printf("2) Text demo\n");
+	printf("1) Cone\n");
+	printf("2) Circles\n");
+	printf("3) Text\n");
 	printf("0) Exit\n");
 
 	printf("\n");
@@ -51,9 +53,11 @@ static int show_menu(PRINTER *prn) {
 
 	switch (c) {
 		case '1' :	cone_demo(prn);
-					break;
-		case '2' :	text_demo(prn);
-					break;
+				break;
+		case '2' :	circles_demo(prn);
+				break;
+		case '3' :	text_demo(prn);
+				break;
 	}
 
 	return c;
@@ -96,6 +100,34 @@ static void cone_demo(PRINTER *prn) {
 	xy_hm(prn);
 }
 
+static void circles_demo(PRINTER *prn) {
+	pr_init(prn);
+	POSITION paper = pr_get_max_position(prn);
+
+	int r = 250;
+	int dist = 30;
+
+	xy_ma(prn, paper.x / 2 + r * 2 + dist, paper.y / 2 + r / 2 + dist);
+	xy_cr(prn, r);
+	xy_mr(prn, - r * 2 - dist, 0);
+	xy_cr(prn, r);
+	xy_mr(prn, - r * 2 - dist, 0);
+	xy_cr(prn, r);
+
+	xy_mr(prn, r + dist / 2, -r - dist);
+	xy_cr(prn, r);
+	xy_mr(prn, r * 2 + dist, 0);
+	xy_cr(prn, r);
+
+	xy_set_font_size(10);
+	xy_ma(prn, paper.x / 2 - 350, paper.y / 2 + r * 2 + dist);
+	xy_write(prn, "OLYMPIC GAMES");
+	xy_ma(prn, paper.x / 2 - 450, paper.y / 2 - r * 2 - dist);
+	xy_write(prn, "SOCHI RUSSIA 2014");
+
+	xy_hm(prn);
+}
+
 static void text_demo(PRINTER *prn) {
 	pr_init(prn);
 	POSITION paper = pr_get_max_position(prn);
@@ -107,9 +139,6 @@ static void text_demo(PRINTER *prn) {
 		xy_set_text_angle(M_PI * 2 / 16 * i);
 		xy_ma(prn, paper.x / 2, paper.y / 2);
 		xy_write(prn, "    XY1450.WEBSTONES.CZ");
-		//xy_write(prn, "0123456789\n");
-		//xy_ma(prn, 50, 1850 - 200 * 7);
-		//xy_write(prn, "ABCDEFGHIJKLMNOPQRSTUVWXYZ\n");
 	}
 
 	xy_hm(prn);

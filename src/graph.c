@@ -76,15 +76,15 @@ void xy_ar(PRINTER *p, int r, double start_arc, double end_arc) {
 	int start_deg = start_arc * 180 / M_PI;
 	int end_deg = end_arc * 180 / M_PI;
 
-	int x = (double) r * sin(start_arc);
-	int y = (double) r * cos(start_arc);
+	int x = (double) r * cos(start_arc);
+	int y = (double) r * sin(start_arc);
 	xy_ma(p, x, y);
 	xy_pen_down(p);
 
 	int i;
 	for (i = start_deg; i <= end_deg; i++) {
-		x = (double) r * sin((double) i / 180 * M_PI);
-		y = (double) r * cos((double) i / 180 * M_PI);
+		x = (double) r * cos((double) i / 180 * M_PI);
+		y = (double) r * sin((double) i / 180 * M_PI);
 		xy_va(p, x, y);
 	}
 
