@@ -111,12 +111,12 @@ void pr_init(PRINTER *p) {
 	switch_direction(p, 0);
 
 	if (!is_ready(p)) {
-        	int i;
-        	for (i = 0; i < MAX_Y; i++) {
-                	if (is_ready(p))
-                        	break;
+		int i;
+		for (i = 0; i < MAX_Y; i++) {
+			if (is_ready(p))
+				break;
 			dirty_step(p);
-        	}
+		}
 
 		switch_direction(p, 1);
 		for (i = 0; i < 50; i++) {
@@ -240,11 +240,11 @@ static void step(PRINTER *p, int repeat) {
 
 static void dirty_step(PRINTER *p) {
 	set_bit(&(p->data), STEP_BIT, 0);
-        write_data(p->parport_fd, p->data);
-        usleep(SLEEP_INTERVAL);
-        set_bit(&(p->data), STEP_BIT, 1);
-        write_data(p->parport_fd, p->data);
-        usleep(SLEEP_INTERVAL);
+	write_data(p->parport_fd, p->data);
+	usleep(SLEEP_INTERVAL);
+	set_bit(&(p->data), STEP_BIT, 1);
+	write_data(p->parport_fd, p->data);
+	usleep(SLEEP_INTERVAL);
 }
 
 
@@ -253,8 +253,6 @@ static void dirty_step(PRINTER *p) {
 */
 static void switch_x_y(PRINTER *p, int value) {
 	set_bit(&(p->data), XY_BIT, value);
-	//write_data(p->parport_fd, p->data);
-	//usleep(SLEEP_INTERVAL);
 }
 
 /*
@@ -262,8 +260,6 @@ static void switch_x_y(PRINTER *p, int value) {
 */
 static void switch_direction(PRINTER *p, int value) {
 	set_bit(&(p->data), DIRECTION_BIT, value);
-	//write_data(p->parport_fd, p->data);
-	//usleep(SLEEP_INTERVAL);
 }
 
 
@@ -272,7 +268,6 @@ static void switch_direction(PRINTER *p, int value) {
 */
 static void print_port_status(PRINTER *p) {
 	DATA data = p->data;
-	//read_data(p->parport_fd, &data);
 
 	printf("--status--\n");
 	int i;
