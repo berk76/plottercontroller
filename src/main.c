@@ -36,7 +36,7 @@ int main(int argc, char **argv) {
 }
 
 static int show_menu(PRINTER *prn) {
-	printf("XY-1450 controlling program\n");
+	printf("PlotterController\n");
 	printf("Build 20140204\n");
 	printf("---------------------------\n\n");
 
@@ -138,7 +138,7 @@ static void text_demo(PRINTER *prn) {
 	for (i = 0; i < 16; i++) {
 		xy_set_text_angle(M_PI * 2 / 16 * i);
 		xy_ma(prn, paper.x / 2, paper.y / 2);
-		xy_write(prn, "    XY1450.WEBSTONES.CZ");
+		xy_write(prn, "    XY4150.WEBSTONES.CZ");
 	}
 
 	xy_hm(prn);

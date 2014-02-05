@@ -1,5 +1,5 @@
 syntax: glob
-xy1450*
+plotter_controller*
 *.bak
 src/*.o
 src/*.bak
