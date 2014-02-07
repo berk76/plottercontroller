@@ -89,8 +89,8 @@ static void draw_char(PRINTER *p, unsigned char c) {
 
 static POSITION transform_position(int x, int y, double angle) {
 	POSITION result;
-	result.x = (double) x * cos(angle) + (double) y * cos(angle + M_PI / 2);
-	result.y = (double) y * cos(angle) + (double) x * cos(angle - M_PI / 2);
+	result.x = (double) x * cos(angle) + (double) y * cos(angle + M_PI_2);
+	result.y = (double) y * cos(angle) + (double) x * cos(angle - M_PI_2);
 	return result;
 }
 
