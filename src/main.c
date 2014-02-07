@@ -18,6 +18,9 @@ static int show_menu(PRINTER *prn);
 static void cone_demo(PRINTER *prn);
 static void circles_demo(PRINTER *prn);
 static void text_demo(PRINTER *prn);
+static void triangle_demo(PRINTER *prn);
+static void draw_triangle_fragment(PRINTER *prn, POSITION vertex, int len, int distance, double angle);
+static POSITION transform_position(int x, int y, double angle);
 
 
 int main(int argc, char **argv) {
@@ -37,12 +40,13 @@ int main(int argc, char **argv) {
 
 static int show_menu(PRINTER *prn) {
 	printf("PlotterController\n");
-	printf("Build 20140204\n");
+	printf("Build 20140207\n");
 	printf("---------------------------\n\n");
 
-	printf("1) Cone\n");
-	printf("2) Circles\n");
-	printf("3) Text\n");
+	printf("1) Cone demo\n");
+	printf("2) Circles demo\n");
+	printf("3) Text demo\n");
+	printf("4) Triangle demo\n");
 	printf("0) Exit\n");
 
 	printf("\n");
@@ -57,6 +61,8 @@ static int show_menu(PRINTER *prn) {
 		case '2' :	circles_demo(prn);
 				break;
 		case '3' :	text_demo(prn);
+				break;
+		case '4' :	triangle_demo(prn);
 				break;
 	}
 
@@ -143,3 +149,68 @@ static void text_demo(PRINTER *prn) {
 
 	xy_hm(prn);
 }
+
+
+static void triangle_demo(PRINTER *prn) {
+	pr_init(prn);
+	POSITION paper = pr_get_max_position(prn);
+
+	int l = 1600;
+	int h = (double) l * cos(M_PI / 6.0);
+	int d = 80;
+
+	POSITION p;
+	p.x = paper.x / 2 - h / 2;
+	p.y = paper.y / 2 - l / 2;
+	draw_triangle_fragment(prn, p, l, d, 0);
+
+	p.x = paper.x / 2 - h / 2;
+	p.y = paper.y / 2 + l / 2;
+	draw_triangle_fragment(prn, p, l, d, M_PI + M_PI / 3.0);
+
+	p.x = paper.x / 2 + h / 2;
+	p.y = paper.y / 2;
+	draw_triangle_fragment(prn, p, l, d, M_PI * 2.0 / 3.0);
+
+	xy_hm(prn);
+}
+
+static void draw_triangle_fragment(PRINTER * prn, POSITION vertex, int len, int distance, double angle) {
+
+	int h = (double) len * cos(M_PI_2 / 3.0);
+
+	POSITION p = transform_position(h, len / 2, angle);
+	int x1s = vertex.x + p.x;
+	int y1s = vertex.y + p.y;
+	int x2s = vertex.x;
+	int y2s = vertex.y;
+
+	int i, x1, x2, y1, y2;
+	int dir = 0;
+	for (i = 0; i < len / distance; i++) {
+		p = transform_position((double) distance * cos(M_PI_2 / 3.0) * (double) i, (double) distance * sin(M_PI_2 / 3.0) * (double) i, angle);
+		x1 = x1s - p.x;
+		y1 = y1s - p.y;
+		p = transform_position(0, distance * i, angle);
+		x2 = x2s + p.x;
+		y2 = y2s + p.y;
+
+		if (dir == 0) {
+			xy_ma(prn, x1, y1);
+			xy_va(prn, x2, y2);
+			dir = 1;
+		} else {
+			xy_ma(prn, x2, y2);
+			xy_va(prn, x1, y1);
+			dir = 0;
+		}
+	}
+}
+
+static POSITION transform_position(int x, int y, double angle) {
+	POSITION result;
+	result.x = (double) x * cos(angle) + (double) y * cos(angle + M_PI_2);
+	result.y = (double) y * cos(angle) + (double) x * cos(angle - M_PI_2);
+	return result;
+}
+
