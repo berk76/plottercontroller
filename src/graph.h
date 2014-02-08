@@ -7,6 +7,12 @@
 #ifndef _GRAPH_H
 #define _GRAPH_H
 
+typedef struct {
+	double x;
+	double y;
+} D_POSITION;
+
+
 /* Move Absolute */
 extern void xy_ma(PRINTER *p, int x, int y);
 
@@ -36,5 +42,8 @@ extern void xy_ar(PRINTER *p, int r, double start_arc, double end_arc);
 
 /* Home */
 extern void xy_hm(PRINTER *p);
+
+/* Transforms position  */
+extern D_POSITION _transform_position(double x, double y, double angle);
 
 #endif

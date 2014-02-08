@@ -99,6 +99,15 @@ void xy_hm(PRINTER *p) {
 	xy_flush_moving_buffer(p);
 }
 
+/* Transforms position */
+D_POSITION _transform_position(double x, double y, double angle) {
+	D_POSITION result;
+	result.x = x * cos(angle) + y * cos(angle + M_PI_2);
+	result.y = y * cos(angle) + x * cos(angle - M_PI_2);
+	return result;
+}
+
+
 /* Just Move */
 static void xy_move_rel(PRINTER *p, int x, int y) {
 	//printf("xy_move_rel X=%d, Y=%d\n", x, y);

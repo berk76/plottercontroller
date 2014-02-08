@@ -14,13 +14,13 @@
 
 #define DEVICE "/dev/parport0" 
 
+
 static int show_menu(PRINTER *prn);
 static void cone_demo(PRINTER *prn);
 static void circles_demo(PRINTER *prn);
 static void text_demo(PRINTER *prn);
 static void triangle_demo(PRINTER *prn);
-static void draw_triangle_fragment(PRINTER *prn, POSITION vertex, int len, int distance, double angle);
-static POSITION transform_position(int x, int y, double angle);
+static void draw_triangle_fragment(PRINTER *prn, D_POSITION vertex, double len, double distance, double angle);
 
 
 int main(int argc, char **argv) {
@@ -40,7 +40,7 @@ int main(int argc, char **argv) {
 
 static int show_menu(PRINTER *prn) {
 	printf("PlotterController\n");
-	printf("Build 20140207\n");
+	printf("Build 20140208\n");
 	printf("---------------------------\n\n");
 
 	printf("1) Cone demo\n");
@@ -155,11 +155,11 @@ static void triangle_demo(PRINTER *prn) {
 	pr_init(prn);
 	POSITION paper = pr_get_max_position(prn);
 
-	int l = 1600;
-	int h = (double) l * cos(M_PI / 6.0);
-	int d = 80;
+	double l = 1600;
+	double h = l * cos(M_PI_2 / 3.0);
+	double d = 80;
 
-	POSITION p;
+	D_POSITION p;
 	p.x = paper.x / 2 - h / 2;
 	p.y = paper.y / 2 - l / 2;
 	draw_triangle_fragment(prn, p, l, d, 0);
@@ -175,23 +175,24 @@ static void triangle_demo(PRINTER *prn) {
 	xy_hm(prn);
 }
 
-static void draw_triangle_fragment(PRINTER * prn, POSITION vertex, int len, int distance, double angle) {
+static void draw_triangle_fragment(PRINTER * prn, D_POSITION vertex, double len, double distance, double angle) {
 
-	int h = (double) len * cos(M_PI_2 / 3.0);
+	double h = len * cos(M_PI_2 / 3.0);
 
-	POSITION p = transform_position(h, len / 2, angle);
+	D_POSITION p = _transform_position(h, len / 2, angle);
 	int x1s = vertex.x + p.x;
 	int y1s = vertex.y + p.y;
 	int x2s = vertex.x;
 	int y2s = vertex.y;
 
-	int i, x1, x2, y1, y2;
+	double x1, x2, y1, y2;
+	int i;
 	int dir = 0;
 	for (i = 0; i < len / distance; i++) {
-		p = transform_position((double) distance * cos(M_PI_2 / 3.0) * (double) i, (double) distance * sin(M_PI_2 / 3.0) * (double) i, angle);
+		p = _transform_position(distance * cos(M_PI_2 / 3.0) * (double) i, distance * sin(M_PI_2 / 3.0) * (double) i, angle);
 		x1 = x1s - p.x;
 		y1 = y1s - p.y;
-		p = transform_position(0, distance * i, angle);
+		p = _transform_position(0, distance * (double) i, angle);
 		x2 = x2s + p.x;
 		y2 = y2s + p.y;
 
@@ -205,12 +206,5 @@ static void draw_triangle_fragment(PRINTER * prn, POSITION vertex, int len, int 
 			dir = 0;
 		}
 	}
-}
-
-static POSITION transform_position(int x, int y, double angle) {
-	POSITION result;
-	result.x = (double) x * cos(angle) + (double) y * cos(angle + M_PI_2);
-	result.y = (double) y * cos(angle) + (double) x * cos(angle - M_PI_2);
-	return result;
 }
 
