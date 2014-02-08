@@ -67,10 +67,10 @@ static void draw_char(PRINTER *p, unsigned char c) {
 
 	char *s = font[c - 32];
 	int cmd[FONT_CMD_SIZE];
-	POSITION pos;
+	D_POSITION pos;
 	
 	while ((s = get_first_command(s, cmd, FONT_CMD_SIZE)) != NULL) {
-		pos = transform_position(cmd[1] * char_size, cmd[2] * char_size, text_angle);
+		pos = _transform_position(cmd[1] * char_size, cmd[2] * char_size, text_angle);
 
 		 switch (cmd[0]) {
 			case 'm' :      xy_mr(p, pos.x, pos.y);
@@ -82,16 +82,8 @@ static void draw_char(PRINTER *p, unsigned char c) {
 		 }
 	}
 
-	pos = transform_position(char_h_dist * 10, 0, text_angle);
+	pos = _transform_position(char_h_dist * 10, 0, text_angle);
 	xy_mr(p, pos.x, pos.y);
-}
-
-
-static POSITION transform_position(int x, int y, double angle) {
-	POSITION result;
-	result.x = (double) x * cos(angle) + (double) y * cos(angle + M_PI_2);
-	result.y = (double) y * cos(angle) + (double) x * cos(angle - M_PI_2);
-	return result;
 }
 
 
