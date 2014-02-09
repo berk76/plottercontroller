@@ -21,6 +21,7 @@ static void circles_demo(PRINTER *prn);
 static void text_demo(PRINTER *prn);
 static void triangle_demo(PRINTER *prn);
 static void draw_triangle_fragment(PRINTER *prn, D_POSITION vertex, double len, double distance, double angle);
+static void hpgl_demo(PRINTER *prn);
 
 
 int main(int argc, char **argv) {
@@ -40,13 +41,14 @@ int main(int argc, char **argv) {
 
 static int show_menu(PRINTER *prn) {
 	printf("PlotterController\n");
-	printf("Build 20140208\n");
+	printf("Build 20140209\n");
 	printf("---------------------------\n\n");
 
 	printf("1) Cone demo\n");
 	printf("2) Circles demo\n");
 	printf("3) Text demo\n");
 	printf("4) Triangle demo\n");
+	printf("5) HPGL demo\n");
 	printf("0) Exit\n");
 
 	printf("\n");
@@ -63,6 +65,8 @@ static int show_menu(PRINTER *prn) {
 		case '3' :	text_demo(prn);
 				break;
 		case '4' :	triangle_demo(prn);
+				break;
+		case '5' :	hpgl_demo(prn);
 				break;
 	}
 
@@ -208,3 +212,10 @@ static void draw_triangle_fragment(PRINTER * prn, D_POSITION vertex, double len,
 	}
 }
 
+static void hpgl_demo(PRINTER *prn) {
+	char file_name[100];
+	printf("Enter HPGL file name: ");
+	scanf("%99s", file_name);
+	while (getchar() != '\n');
+	hpgl_draw_from_file(prn, file_name);
+}
