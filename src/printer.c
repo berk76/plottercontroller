@@ -68,7 +68,6 @@ PRINTER *pr_create_printer(char *device_name) {
 	int fd;
 
 	if ((fd = open_parport(device_name)) == 0) {
-        fprintf(stderr, "Error: Probably you don't have permission access %s\n", device_name);
         return NULL;
     }
 
@@ -106,19 +105,17 @@ void pr_init(PRINTER *p) {
 	set_bit(&(p->data), READY_BIT, 1);
 	set_bit(&(p->data), STEP_BIT, 1);
 	write_data(p->parport_fd, p->data);
-	usleep(SLEEP_INTERVAL_LOW);
+	USLEEP(SLEEP_INTERVAL_LOW);
 
 	switch_direction(p, 0);
 
 	if (!is_ready(p)) {
-		int i;
-		for (i = 0; i < MAX_Y; i++) {
-			if (is_ready(p))
-				break;
+		while (!is_ready(p)) {
 			dirty_step(p);
 		}
 
 		switch_direction(p, 1);
+		int i;
 		for (i = 0; i < 50; i++) {
 			dirty_step(p);
 		}
@@ -182,7 +179,7 @@ void pr_set_moving_buffer(PRINTER *p, int x, int y) {
 void pr_pen(PRINTER *p, int value) {
 	set_bit(&(p->data), PEN_BIT, value);
 	write_data(p->parport_fd, p->data);
-	usleep(SLEEP_INTERVAL);
+	USLEEP(SLEEP_INTERVAL);
 }
 
 /*
@@ -203,11 +200,11 @@ void pr_move(PRINTER *p, int xy, int direction, int repeat) {
 static int is_ready(PRINTER *p) {
 	set_bit(&(p->data), READY_BIT, 0);
 	write_data(p->parport_fd, p->data);
-	usleep(SLEEP_INTERVAL);
+	USLEEP(SLEEP_INTERVAL);
 
 	set_bit(&(p->data), READY_BIT, 1);
 	write_data(p->parport_fd, p->data);
-	usleep(SLEEP_INTERVAL);
+	USLEEP(SLEEP_INTERVAL);
 
 	DATA data;
 	read_data(p->parport_fd, &data);
@@ -241,10 +238,10 @@ static void step(PRINTER *p, int repeat) {
 static void dirty_step(PRINTER *p) {
 	set_bit(&(p->data), STEP_BIT, 0);
 	write_data(p->parport_fd, p->data);
-	usleep(SLEEP_INTERVAL);
+	USLEEP(SLEEP_INTERVAL);
 	set_bit(&(p->data), STEP_BIT, 1);
 	write_data(p->parport_fd, p->data);
-	usleep(SLEEP_INTERVAL);
+	USLEEP(SLEEP_INTERVAL);
 }
 
 

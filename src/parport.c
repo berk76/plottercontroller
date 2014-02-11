@@ -19,6 +19,7 @@
 #endif
 
 #ifdef _WIN32
+#include <windows.h>
 #include <conio.h>
 #endif
 
@@ -31,6 +32,7 @@ int open_parport(char *device) {
 	
 	if ((fd=open(device, O_RDWR)) < 0) { 
 		fprintf(stderr, "can not open %s\n", device); 
+		fprintf(stderr, "Probably you don't have permission access %s\n", device);
 		return 0; 
 	} 
 	
@@ -72,8 +74,41 @@ int read_data(int fd, unsigned char *data) {
 #endif
 
 #ifdef _WIN32
+/*
+*	Access to parallel port doesn't work under MS Windows
+*	Needs to be fixed !!!
+*/
 
-int open_parport(char *device) { 
+static BOOL bPrivException = FALSE;
+
+LONG WINAPI HandlerExceptionFilter ( EXCEPTION_POINTERS *pExPtrs ) {
+
+	if (pExPtrs->ExceptionRecord->ExceptionCode == EXCEPTION_PRIV_INSTRUCTION) {
+		pExPtrs->ContextRecord->Eip ++; // Skip the OUT or IN instruction that caused the exception
+		bPrivException = TRUE;
+		return EXCEPTION_CONTINUE_EXECUTION;
+	} else
+		return EXCEPTION_CONTINUE_SEARCH;
+}
+
+int open_parport(char *device) {
+
+	SetUnhandledExceptionFilter(HandlerExceptionFilter);
+	bPrivException = FALSE;
+	_inp(0x378);  // Try to access the given port address
+
+	if (bPrivException) {
+    	fprintf(stderr, "Privileged instruction exception has occured!\n\n"
+						"To use this program under Windows NT or Windows 2000\n"
+						"you need to install the driver 'UserPort.SYS' and grant\n"
+						"access to the ports used by this program.\n");
+		return 0;											 
+    }
+	
+
+	/* To enable Bidirectional data transfer just set the "Bidirectional" bit (bit 5) in control register. */
+	write_data(0x37A, 32);
+
 	/* Parallel port address */
 	return 0x378;
 }
@@ -91,6 +126,23 @@ int write_data(int fd, unsigned char data) {
 int read_data(int fd, unsigned char *data) { 
 	*data = _inp(fd); 
 	return 0;
+}
+
+void usleep_win (long usec) {
+	LARGE_INTEGER lFrequency;
+	LARGE_INTEGER lEndTime;
+	LARGE_INTEGER lCurTime;
+
+	QueryPerformanceFrequency (&lFrequency);
+	if (lFrequency.QuadPart) {
+		QueryPerformanceCounter (&lEndTime);
+		lEndTime.QuadPart += (LONGLONG) usec * lFrequency.QuadPart / 1000000;
+
+		do {
+			QueryPerformanceCounter (&lCurTime);
+			Sleep(0);
+		} while (lCurTime.QuadPart < lEndTime.QuadPart);
+	}
 }
 
 #endif
