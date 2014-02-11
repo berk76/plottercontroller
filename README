@@ -5,4 +5,9 @@ Please visit project site for more information:
 http://xy4150.webstones.cz/
 
 
+Known Issues:
+-------------
+* Parport I/O doesn't work under MS Windows - Needs to be fixed!
+
+
 Jaroslav Beran (jaroslav.beran@gmail.com)

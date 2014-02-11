@@ -27,4 +27,14 @@ extern int write_data(int fd, unsigned char data);
 */
 extern int read_data(int fd, unsigned char *data);
 
+/*
+*	Windows does not have usleep
+*/
+#ifdef _WIN32
+extern void usleep_win (long usec);
+#define USLEEP(t) (usleep_win(t))
+#else
+#define USLEEP(t) (usleep(t))
+#endif /* _WIN32 */
+
 #endif

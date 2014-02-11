@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
 	PRINTER *prn;
 
 	if ((prn = pr_create_printer(DEVICE)) == NULL) {
-		fprintf(stderr, "Error: Probably you don't have permission access %s\n", DEVICE);
+		fprintf(stderr, "Error: Cannot access port\n");
 		return -1;
 	}
 	
