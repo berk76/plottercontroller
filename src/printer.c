@@ -45,13 +45,16 @@
 #define DIRECTION_BIT 0	/* L = TO LEFT (FORWARD), H = TO RIGHT (BACK) */
 #define READY_BIT 4		/* L = READY, H = NOT READY */
 
-#define SLEEP_INTERVAL 		1000	/* in ms */
-#define SLEEP_INTERVAL_LOW	10000
-
 #define MAX_X 2600
 #define MAX_Y 1850
 
 #define check_bit(var,pos) ((var) & (1<<(pos)))
+
+/* 
+ *	Speed value is sleep interval in ms
+ *	There are 10 values (0 the slowes 9 the fasts)
+ */
+static speed[] = {2600,2400,2200,2000,1800,1600,1400,1200,1000,800};
 
 static int is_ready(PRINTER *p);
 static void step(PRINTER *p, int repeat);
@@ -83,6 +86,7 @@ PRINTER *pr_create_printer(char *device_name) {
 	result->moving_buffer.x = 0;
 	result->moving_buffer.y = 0;
 	result->data = 0;
+	result->velocity = 8;
 
 	return result;
 }
@@ -105,7 +109,7 @@ void pr_init(PRINTER *p) {
 	set_bit(&(p->data), READY_BIT, 1);
 	set_bit(&(p->data), STEP_BIT, 1);
 	write_data(p->parport_fd, p->data);
-	USLEEP(SLEEP_INTERVAL_LOW);
+	USLEEP(speed[p->velocity]);
 
 	switch_direction(p, 0);
 
@@ -174,12 +178,21 @@ void pr_set_moving_buffer(PRINTER *p, int x, int y) {
 }
 
 /*
+*	Set velocity (0-9)
+*/
+void pr_set_velocity(PRINTER *p, int v) {
+	if ((v >= 0) && (v < 10)) {
+		p->velocity = v;
+	}
+}
+
+/*
 *	Set pen
 */
 void pr_pen(PRINTER *p, int value) {
 	set_bit(&(p->data), PEN_BIT, value);
 	write_data(p->parport_fd, p->data);
-	USLEEP(SLEEP_INTERVAL);
+	USLEEP(speed[p->velocity] * 10);
 }
 
 /*
@@ -200,11 +213,11 @@ void pr_move(PRINTER *p, int xy, int direction, int repeat) {
 static int is_ready(PRINTER *p) {
 	set_bit(&(p->data), READY_BIT, 0);
 	write_data(p->parport_fd, p->data);
-	USLEEP(SLEEP_INTERVAL);
+	USLEEP(speed[p->velocity]);
 
 	set_bit(&(p->data), READY_BIT, 1);
 	write_data(p->parport_fd, p->data);
-	USLEEP(SLEEP_INTERVAL);
+	USLEEP(speed[p->velocity]);
 
 	DATA data;
 	read_data(p->parport_fd, &data);
@@ -238,10 +251,10 @@ static void step(PRINTER *p, int repeat) {
 static void dirty_step(PRINTER *p) {
 	set_bit(&(p->data), STEP_BIT, 0);
 	write_data(p->parport_fd, p->data);
-	USLEEP(SLEEP_INTERVAL);
+	USLEEP(speed[p->velocity]);
 	set_bit(&(p->data), STEP_BIT, 1);
 	write_data(p->parport_fd, p->data);
-	USLEEP(SLEEP_INTERVAL);
+	USLEEP(speed[p->velocity]);
 }
 
 

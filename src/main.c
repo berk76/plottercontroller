@@ -16,6 +16,7 @@
 
 
 static int show_menu(PRINTER *prn);
+static void test_page(PRINTER *prn);
 static void cone_demo(PRINTER *prn);
 static void circles_demo(PRINTER *prn);
 static void text_demo(PRINTER *prn);
@@ -41,14 +42,15 @@ int main(int argc, char **argv) {
 
 static int show_menu(PRINTER *prn) {
 	printf("PlotterController\n");
-	printf("Build 20140209\n");
+	printf("Build 20140216\n");
 	printf("---------------------------\n\n");
 
-	printf("1) Cone demo\n");
-	printf("2) Circles demo\n");
-	printf("3) Text demo\n");
-	printf("4) Triangle demo\n");
-	printf("5) HPGL demo\n");
+	printf("1) Test page\n");
+	printf("2) Cone demo\n");
+	printf("3) Circles demo\n");
+	printf("4) Text demo\n");
+	printf("5) Triangle demo\n");
+	printf("6) HPGL demo\n");
 	printf("0) Exit\n");
 
 	printf("\n");
@@ -58,19 +60,76 @@ static int show_menu(PRINTER *prn) {
 	while (getchar() != '\n');
 
 	switch (c) {
-		case '1' :	cone_demo(prn);
+		case '1' :	test_page(prn);
 				break;
-		case '2' :	circles_demo(prn);
+		case '2' :	cone_demo(prn);
 				break;
-		case '3' :	text_demo(prn);
+		case '3' :	circles_demo(prn);
 				break;
-		case '4' :	triangle_demo(prn);
+		case '4' :	text_demo(prn);
 				break;
-		case '5' :	hpgl_demo(prn);
+		case '5' :	triangle_demo(prn);
+				break;
+		case '6' :	hpgl_demo(prn);
 				break;
 	}
 
 	return c;
+}
+
+static void test_page(PRINTER *prn) {
+	pr_init(prn);
+	POSITION paper = pr_get_max_position(prn);
+	
+	xy_va(prn, paper.x, 0);
+	xy_va(prn, paper.x, paper.y);
+	xy_va(prn, 0, paper.y);
+	xy_va(prn, 0, 0);
+
+	xy_vs(prn, 7);
+	xy_set_font_size(10);
+	xy_set_text_angle(M_PI_2);
+	xy_ma(prn, 200, paper.y / 2 - 300);
+	xy_write(prn, "TEST PAGE");
+
+	xy_vs(prn, 8);
+	int x = paper.x / 2;
+	int y = paper.y / 2;
+	int r = 800;
+	int n = 12;
+
+	int i;
+	int dir = 0;
+	for (i = 0; i < n; i ++) {
+		int x1 = x + r * sin(M_PI / (double) n * (double) i); 
+		int y1 = y + r * cos(M_PI / (double) n * (double) i);
+		int x2 = x - r * sin(M_PI / (double) n * (double) i);
+		int y2 = y - r * cos(M_PI / (double) n * (double) i);
+		if (dir == 0) {
+			xy_ma(prn, x1, y1);
+			xy_va(prn, x2, y2);
+			dir = 1;
+		} else {
+			xy_ma(prn, x2, y2);
+			xy_va(prn, x1, y1);
+			dir = 0;
+		}
+	}
+
+	xy_vs(prn, 7);
+	xy_set_font_size(8);
+	xy_set_text_angle(M_PI_2);
+	xy_ma(prn, paper.x - 370, 100);
+	xy_write(prn, "0123456789");
+	xy_ma(prn, paper.x - 280, 100);
+	xy_write(prn, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+	xy_ma(prn, paper.x - 190, 100);
+	xy_write(prn, "abcdefghijklmnopqrstuvwxyz");
+	xy_ma(prn, paper.x - 100, 100);
+	xy_write(prn, "!\"#$%&'()*+,-./:;<=>?@[\\]^_´{|}~");
+
+	xy_vs(prn, 8);
+	xy_hm(prn);
 }
 
 static void cone_demo(PRINTER *prn) {
@@ -131,10 +190,13 @@ static void circles_demo(PRINTER *prn) {
 
 	xy_set_font_size(10);
 	xy_ma(prn, paper.x / 2 - 350, paper.y / 2 + r * 2 + dist);
+	xy_vs(prn, 7);
 	xy_write(prn, "OLYMPIC GAMES");
+	xy_vs(prn, 8);
 	xy_ma(prn, paper.x / 2 - 450, paper.y / 2 - r * 2 - dist);
+	xy_vs(prn, 7);
 	xy_write(prn, "SOCHI RUSSIA 2014");
-
+	xy_vs(prn, 8);
 	xy_hm(prn);
 }
 
@@ -143,6 +205,7 @@ static void text_demo(PRINTER *prn) {
 	POSITION paper = pr_get_max_position(prn);
 
 	xy_set_font_size(5);
+	xy_vs(prn, 7);
 
 	int i;
 	for (i = 0; i < 16; i++) {
@@ -151,6 +214,7 @@ static void text_demo(PRINTER *prn) {
 		xy_write(prn, "    XY4150.WEBSTONES.CZ");
 	}
 
+	xy_vs(prn, 8);
 	xy_hm(prn);
 }
 
@@ -219,3 +283,4 @@ static void hpgl_demo(PRINTER *prn) {
 	while (getchar() != '\n');
 	hpgl_draw_from_file(prn, file_name);
 }
+
