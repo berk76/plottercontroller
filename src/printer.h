@@ -21,6 +21,7 @@ typedef struct {
 	POSITION	origin_position;
 	POSITION	moving_buffer;
 	DATA		data;
+	int		velocity;
 } PRINTER;
 
 /*
@@ -68,6 +69,11 @@ extern POSITION pr_get_moving_buffer(PRINTER *p);
 *	Set moving buffer;
 */
 extern void pr_set_moving_buffer(PRINTER *p, int x, int y);
+
+/*
+*	Set velocity (0-9)
+*/
+extern void pr_set_velocity(PRINTER *p, int v);
 
 /*
 *	Set pen

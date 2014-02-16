@@ -99,6 +99,12 @@ void xy_hm(PRINTER *p) {
 	xy_flush_moving_buffer(p);
 }
 
+/* Set Velocity (0 - 9) */
+xy_vs(PRINTER *p, int v) {
+	xy_flush_moving_buffer(p);
+	pr_set_velocity(p, v);
+}
+
 /* Transforms position */
 D_POSITION _transform_position(double x, double y, double angle) {
 	D_POSITION result;

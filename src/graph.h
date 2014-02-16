@@ -43,6 +43,9 @@ extern void xy_ar(PRINTER *p, int r, double start_arc, double end_arc);
 /* Home */
 extern void xy_hm(PRINTER *p);
 
+/* Set Velocity (0 - 9) */
+extern xy_vs(PRINTER *p, int v);
+
 /* Transforms position  */
 extern D_POSITION _transform_position(double x, double y, double angle);
 

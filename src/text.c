@@ -77,12 +77,12 @@ static void draw_char(PRINTER *p, unsigned char c) {
 					break;
 			case 'v' :      xy_vr(p, pos.x, pos.y);
 					break;
-			//case 'c' :      xy_ar(p, cmd[1] * char_size, cmd[2] * char_size, cmd[3] * char_size);
-			//		break;
+			case 'p' :      xy_pr(p, pos.x, pos.y);
+					break;
 		 }
 	}
 
-	pos = _transform_position(char_h_dist * 10, 0, text_angle);
+	pos = _transform_position(char_h_dist * char_size, 0, text_angle);
 	xy_mr(p, pos.x, pos.y);
 }
 
