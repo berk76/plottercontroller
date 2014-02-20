@@ -22,6 +22,7 @@ static void circles_demo(PRINTER *prn);
 static void text_demo(PRINTER *prn);
 static void triangle_demo(PRINTER *prn);
 static void draw_triangle_fragment(PRINTER *prn, D_POSITION vertex, double len, double distance, double angle);
+static void limits_demo(PRINTER *prn);
 static void hpgl_demo(PRINTER *prn);
 
 
@@ -42,7 +43,7 @@ int main(int argc, char **argv) {
 
 static int show_menu(PRINTER *prn) {
 	printf("PlotterController\n");
-	printf("Build 20140216\n");
+	printf("Build 20140220\n");
 	printf("---------------------------\n\n");
 
 	printf("1) Test page\n");
@@ -50,7 +51,8 @@ static int show_menu(PRINTER *prn) {
 	printf("3) Circles demo\n");
 	printf("4) Text demo\n");
 	printf("5) Triangle demo\n");
-	printf("6) HPGL demo\n");
+	printf("6) Limits demo\n");
+	printf("7) HPGL demo\n");
 	printf("0) Exit\n");
 
 	printf("\n");
@@ -70,7 +72,9 @@ static int show_menu(PRINTER *prn) {
 				break;
 		case '5' :	triangle_demo(prn);
 				break;
-		case '6' :	hpgl_demo(prn);
+		case '6' :	limits_demo(prn);
+				break;
+		case '7' :	hpgl_demo(prn);
 				break;
 	}
 
@@ -274,6 +278,24 @@ static void draw_triangle_fragment(PRINTER * prn, D_POSITION vertex, double len,
 			dir = 0;
 		}
 	}
+}
+
+static void limits_demo(PRINTER *prn) {
+	pr_init(prn);
+	POSITION paper = pr_get_max_position(prn);
+
+	xy_va(prn, paper.x, 0);
+	xy_va(prn, paper.x, paper.y);
+	xy_va(prn, 0, paper.y);
+	xy_va(prn, 0, 0);
+
+	xy_ma(prn, paper.x / 2, paper.y / 2);
+	int i;
+	for (i = 1; i < 6; i++) {
+		xy_cr(prn, 300 * i);
+	}
+
+	xy_hm(prn);
 }
 
 static void hpgl_demo(PRINTER *prn) {
