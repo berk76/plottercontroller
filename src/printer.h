@@ -20,6 +20,9 @@ typedef struct {
 	POSITION	curr_position;
 	POSITION	origin_position;
 	POSITION	moving_buffer;
+	POSITION	virtual_position;
+	int		virtual_pen;
+	int		out_of_limits;
 	DATA		data;
 	int		velocity;
 } PRINTER;
@@ -40,7 +43,7 @@ extern void pr_close_printer(PRINTER *p);
 extern void pr_init(PRINTER *p);
 
 /*
-*       Returns max position;
+*	Returns max position;
 */
 extern POSITION pr_get_max_position(PRINTER *p);
 
