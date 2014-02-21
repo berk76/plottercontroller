@@ -1,13 +1,146 @@
 PlotterController
 Program for controlling (not only) XY41xx plotters 
 ==================================================
-Please visit project site for more information:
-http://xy4150.webstones.cz/
+
+1 Introduction
+--------------
+The aim of PlotterController project is to develop portable controlling 
+program for XY41xx plotters and other small plotters. Project is written 
+in C programming language with place emphasis on portability and extensibility.
 
 
-Known Issues:
--------------
-* Parport I/O doesn't work under MS Windows - Needs to be fixed!
+2 Supported hardware
+--------------------
+
+2.1 Currently supported hardware
+--------------------------------
+* Linux -> /dev/parportx - > XY41xx
+This configuration is tested very well. You only need make sure you have
+rights for reading from and writing to /dev/parportx device.
+
+* MS Windows -> LPTx - > XY41xx
+This configuration is not well tested. In some versions of Winows OS you need 
+additional software (such as userport or porttalk22) for enabling direct access 
+to LPTx ports. See following link:
+
+http://hw-server.com/parallel-port-lpt-ieee-1284#xp
 
 
-Jaroslav Beran (jaroslav.beran@gmail.com)
+2.2 Currently supported interfaces
+----------------------------------
+Currently there is available only connection through parallel port with 
+following configuration:
+
+                                PLOTTER
+     PC-printer port       XY4131        XY4140        XY4150
+bit 2    4 ------------------ 1 ----------- 1 ----------- 1     PEN
+bit 3    5 ------------------ 2 ----------- 2 ----------- 2     STEP
+bit 1    3 ------------------ 3 ----------- 3 ----------- 3     X/Y
+bit 0    2 ------------------ 4 ----------- 4 ----------- 4     +/-
+bit 4    6 ------------------ 5 ----------- 5 ----------- 5     READY
+GND     18 ------------------ 6 ----------- 6 ----------- 6     GND
+
+
+3 Usage
+-------
+Plotter controller works as C library supporting drawing functions.
+
+Example of usage:
+
+#include <stdio.h>
+#include "printer.h"
+#include "graph.h"
+#include "text.h"
+
+#define DEVICE "/dev/parport0"
+
+int main(int argc, char **argv) {
+
+	PRINTER *prn;
+	if ((prn = pr_create_printer(DEVICE)) == NULL) {
+		fprintf(stderr, "Error: Probably you don't have permission access %s\n", DEVICE);
+		return -1;
+	}
+
+	pr_init(prn);			/* Initialization */
+	POSITION paper = pr_get_max_position(prn);
+
+	xy_vr(prn, paper.x, 0);		/* Vector Relative */
+	xy_vr(prn, 0,paper.y);
+	xy_vr(prn, -paper.x,0);
+	xy_vr(prn, 0,-paper.y);
+	xy_vr(prn, paper.x,paper.y);
+	xy_mr(prn, 0,-paper.y);		/* Move Relative */
+	xy_vr(prn, -paper.x,paper.y);
+
+	xy_set_font_size(8);		/* Set Font Size */
+	xy_set_text_angle(M_PI_2);	/* Set Text Orientation */
+	xy_ma(prn, paper.x - 100, 100);	/* Move Absolute */
+	xy_vs(prn, 7);			/* Velocity Set */
+	xy_write(prn, "Hello World!");	/* Draw text */
+
+	xy_hm(prn);			/* Takes pen home */
+
+	pr_close_printer(prn);
+	return 0;
+}
+
+See main.c for more examples.
+See graph.h, text.h and hpgl.h for complete set of available functions.
+
+
+4 Layered architecture
+----------------------
+In order to be PlotterController well extensible it is layered into following 
+logical parts:
+
++---+--------------------+
+| 5 | Client program     |
++---+------+------+------+
+| 4 | Text | HPGL |      |
++  -+------+------+      |
+| 3 | Graph              |
++---+--------------------+
+| 2 | Printer            |
++---+--------------------+
+| 1 | Parport            |
++---+--------------------+
+
+
+4.1 Parport Layer
+-----------------
+Parport layer implements parallel port I/O and depends on Operating System
+used and computer platform used. If you want to add support for new interface
+parport is right place for this kind of implementation.
+
+
+4.2 Printer Layer
+-----------------
+Printer layer implements concrete plotter. If you want to add support for 
+another device you should do it at this layer.
+
+
+4.3 Graph Layer
+---------------
+Graph layer implements basic support for graphics drawing. You can implement 
+new basic drawing features here such as new graphical primitives, line types
+and so on.
+
+
+4.4 Special Graph Layer
+-----------------------
+This layer implements special graphics modules like support for text drawing,
+support for HPGL and so on.
+
+
+4.5 Client program
+------------------
+Client program (or application) works directly with Basic Graphics library and 
+with special graphics modules (text, HPGL).
+
+
+5 Contact
+---------
+Project website:	http://xy4150.webstones.cz/
+Author:			Jaroslav Beran (jaroslav.beran@gmail.com)
+

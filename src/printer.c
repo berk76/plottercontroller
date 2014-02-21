@@ -54,7 +54,7 @@
  *	Speed value is sleep interval in ms
  *	There are 10 values (0 the slowes 9 the fasts)
  */
-static speed[] = {2600,2400,2200,2000,1800,1600,1400,1200,1000,800};
+static int speed[] = {2600,2400,2200,2000,1800,1600,1400,1200,1000,800};
 
 static void dirty_pen(PRINTER *p, int value);
 static int is_ready(PRINTER *p);
