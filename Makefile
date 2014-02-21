@@ -2,7 +2,7 @@
 # 
 
 plotter_controller: src/main.o src/graph.o src/printer.o src/parport.o src/text.o src/hpgl.o
-	$(CC) -Wall -ansi -pedantic -lm -o $@ src/main.o src/graph.o src/printer.o src/parport.o src/text.o src/hpgl.o
+	$(CC) -Wall -ansi -pedantic -o $@ src/main.o src/graph.o src/printer.o src/parport.o src/text.o src/hpgl.o -lm
 	cp var/font1.fnt ./font1.fnt
 
 src/main.o: src/main.c src/main.h src/graph.h src/printer.h src/text.h src/hpgl.h
