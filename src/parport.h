@@ -34,6 +34,7 @@ extern int read_data(int fd, unsigned char *data);
 extern void usleep_win (long usec);
 #define USLEEP(t) (usleep_win(t))
 #else
+#include <unistd.h>
 #define USLEEP(t) (usleep(t))
 #endif /* _WIN32 */
 

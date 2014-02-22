@@ -5,6 +5,7 @@
 */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
 #include "printer.h"
 #include "graph.h"
@@ -100,7 +101,7 @@ void xy_hm(PRINTER *p) {
 }
 
 /* Set Velocity (0 - 9) */
-xy_vs(PRINTER *p, int v) {
+void xy_vs(PRINTER *p, int v) {
 	xy_flush_moving_buffer(p);
 	pr_set_velocity(p, v);
 }

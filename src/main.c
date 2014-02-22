@@ -10,6 +10,7 @@
 #include "printer.h"
 #include "graph.h"
 #include "text.h"
+#include "hpgl.h"
 #include "main.h"
 
 #define DEVICE "/dev/parport0" 
@@ -130,7 +131,7 @@ static void test_page(PRINTER *prn) {
 	xy_ma(prn, paper.x - 190, 100);
 	xy_write(prn, "abcdefghijklmnopqrstuvwxyz");
 	xy_ma(prn, paper.x - 100, 100);
-	xy_write(prn, "!\"#$%&'()*+,-./:;<=>?@[\\]^_´{|}~");
+	xy_write(prn, "!\"#$%&'()*+,-./:;<=>?@[\\]^_{|}~");
 
 	xy_vs(prn, 8);
 	xy_hm(prn);
