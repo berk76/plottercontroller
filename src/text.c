@@ -28,7 +28,7 @@ static void draw_char(PRINTER *p, unsigned char c);
 static POSITION transform_position(int x, int y, double angle);
 static char * get_first_command(char *s, int p[], int size);
 static int load_font(char *font_definition_file);
-static free_font(void);
+static void free_font(void);
 
 
 /* Set font size */
@@ -172,7 +172,7 @@ static int load_font(char *font_definition_file) {
 }
 
 /* Free font */
-static free_font(void) {
+static void free_font(void) {
 
 	if (font == NULL) return;
 
