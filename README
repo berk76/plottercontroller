@@ -15,15 +15,16 @@ in C programming language with place emphasis on portability and extensibility.
 2.1 Currently supported hardware
 --------------------------------
 * Linux -> /dev/parportx - > XY41xx
-This configuration is tested very well. You only need make sure you have
+This configuration is tested very well. You only need to make sure you have
 rights for reading from and writing to /dev/parportx device.
 
 * MS Windows -> LPTx - > XY41xx
-This configuration is not well tested. In some versions of Winows OS you need 
+This configuration is not tested well. In some versions of Winows OS you need 
 additional software (such as userport or porttalk22) for enabling direct access 
 to LPTx ports. See following link:
 
 http://hw-server.com/parallel-port-lpt-ieee-1284#xp
+http://www.drdobbs.com/184409876
 
 
 2.2 Currently supported interfaces
@@ -43,6 +44,19 @@ GND     18 ------------------ 6 ----------- 6 ----------- 6     GND
 
 3 Usage
 -------
+
+3.1 Project build
+-----------------
+For build of project follow these steps:
+
+- Download project and extract it into directory PlotterController
+- Go into directory (cd PlotterController)
+- Run make (it will produce plotter_controller executable file)
+- Run plotter_controller and try demos
+
+
+3.2 Programming
+---------------
 Plotter controller works as C library supporting drawing functions.
 
 Example of usage:
@@ -98,7 +112,7 @@ logical parts:
 | 5 | Client program     |
 +---+------+------+------+
 | 4 | Text | HPGL |      |
-+  -+------+------+      |
++---+------+------+      |
 | 3 | Graph              |
 +---+--------------------+
 | 2 | Printer            |
