@@ -20,12 +20,10 @@
 static char **font = NULL;
 static int char_size = 10;		/* in mm */
 static int char_h_dist = 2;		/* in mm */
-static int char_v_dist = 3;		/* in mm */
 static double text_angle = 0;
 
 
 static void draw_char(PRINTER *p, unsigned char c);
-static POSITION transform_position(int x, int y, double angle);
 static char * get_first_command(char *s, int p[], int size);
 static int load_font(char *font_definition_file);
 static void free_font(void);
@@ -142,7 +140,7 @@ static int load_font(char *font_definition_file) {
 	int i = 0;
 	while (fgets(line, sizeof(line), fr) != NULL) {
 
-		if ((strlen > 0) && strncmp(line, "#", 1) && strncmp(line, "\n", 1)) {
+		if ((strlen(line) > 0) && strncmp(line, "#", 1) && strncmp(line, "\n", 1)) {
 
 			if (i == FONT_TABLE_SIZE) {
 				printf("Error: Font definition file is longer than %d\n", FONT_TABLE_SIZE);

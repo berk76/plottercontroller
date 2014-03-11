@@ -14,11 +14,15 @@ in C programming language with place emphasis on portability and extensibility.
 
 2.1 Currently supported hardware
 --------------------------------
-* Linux -> /dev/parportx - > XY41xx
+* Linux -> /dev/parportx -> XY41xx
 This configuration is tested very well. You only need to make sure you have
 rights for reading from and writing to /dev/parportx device.
 
-* MS Windows -> LPTx - > XY41xx
+* FreeBSD -> /dev/ppix -> XY41xx
+This configuration is tested very well. You only need to make sure you have
+rights for reading from and writing to /dev/ppix device.
+
+* MS Windows -> LPTx -> XY41xx
 This configuration is not tested well. In some versions of Winows OS you need 
 additional software (such as userport or porttalk22) for enabling direct access 
 to LPTx ports. See following link:

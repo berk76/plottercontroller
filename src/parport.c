@@ -2,37 +2,30 @@
 *	parport.c
 *	10.1.2014
 *	Jaroslav Beran (jaroslav.beran@gmail.com)
-*	(http://mockmoon-cybernetics.ch/computer/linux/programming/parport.html)
 */
 
 
 #include <stdio.h> 
 #include "parport.h"
 
+/*
+*	Linux implementation
+*	(http://mockmoon-cybernetics.ch/computer/linux/programming/parport.html)
+*/
 #ifdef __linux__
 #include <fcntl.h>
+#include <sys/ioctl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <asm/ioctl.h> 
 #include <linux/parport.h> 
 #include <linux/ppdev.h> 
-#endif
-
-#ifdef _WIN32
-#include <windows.h>
-#include <conio.h>
-#endif
-
-
-#ifdef __linux__
 
 int open_parport(char *device) { 
-	struct ppdev_frob_struct frob; 
-	int fd; int mode; 
+	int fd; 
 	
 	if ((fd=open(device, O_RDWR)) < 0) { 
-		fprintf(stderr, "can not open %s\n", device); 
-		fprintf(stderr, "Probably you don't have permission access %s\n", device);
+		perror(device);
 		return 0; 
 	} 
 	
@@ -57,27 +50,82 @@ int write_data(int fd, unsigned char data) {
 }
 
 int read_data(int fd, unsigned char *data) { 
-	int mode, res; 
+	int mode; 
 
 	mode = IEEE1284_MODE_ECP; 
-	res=ioctl(fd, PPSETMODE, &mode);	/* ready to read ? */ 
-	mode=255; 
-	res=ioctl(fd, PPDATADIR, &mode); 	/* switch output driver off */ 
+	ioctl(fd, PPSETMODE, &mode);		/* ready to read */ 
+	mode = 255; 
+	ioctl(fd, PPDATADIR, &mode); 		/* read on */ 
 	usleep(1000); 
-	res=ioctl(fd, PPRDATA, data); 		/* now fetch the data! */ 
+	ioctl(fd, PPRDATA, data); 		/* fetch the data */ 
 	usleep(1000); 
 	mode=0;
-	res=ioctl(fd, PPDATADIR, &mode); 
+	ioctl(fd, PPDATADIR, &mode); 		/* write on */
 	return 0; 
 }
 
 #endif
 
-#ifdef _WIN32
+
 /*
-*	Access to parallel port doesn't work under MS Windows
-*	Needs to be fixed !!!
+*	FreeBSD implementation
+*	(http://excamera.com/articles/21/parallel.html)
 */
+#ifdef __FreeBSD__
+#include <fcntl.h>
+#include <sys/ioctl.h>
+#include <dev/ppbus/ppi.h>
+#include <dev/ppbus/ppbconf.h>
+
+int open_parport(char *device) { 
+	int fd = open(device, O_RDWR);
+	if(fd < 0) {
+		perror(device);
+		return -1;
+	}
+
+	return fd;
+}
+
+int close_parport(int fd) {
+	close(fd); 
+	return 0; 
+}
+
+int write_data(int fd, unsigned char data) { 
+	if (ioctl(fd, PPISDATA, &data) < 0) {
+		perror("ioctl PPISDATA");
+		return -1;
+	}
+	return 0;
+}
+
+int read_data(int fd, unsigned char *data) { 
+	uint8_t val;
+	ioctl(fd, PPIGCTRL, &val);		/* get ctrl register  */
+	val |= PCD;
+	ioctl(fd, PPISCTRL, &val);		/* read on */
+	usleep(1000);
+	if (ioctl(fd, PPIGDATA, data) < 0) {	/* fetch the data */
+		perror("ioctl PPIGDATA");
+		return -1;
+	}
+	val &= ~PCD;
+	ioctl(fd, PPISCTRL, &val);		/* write on */
+	usleep(1000);
+	return 0;
+}
+
+#endif
+
+
+/*
+*	Windows implementation
+*	
+*/
+#ifdef _WIN32
+#include <windows.h>
+#include <conio.h>
 
 static BOOL bPrivException = FALSE;
 
@@ -98,16 +146,15 @@ int open_parport(char *device) {
 	_inp(0x378);  // Try to access the given port address
 
 	if (bPrivException) {
-    	fprintf(stderr, "Privileged instruction exception has occured!\n\n"
-						"To use this program under Windows NT or Windows 2000\n"
-						"you need to install the driver 'UserPort.SYS' and grant\n"
-						"access to the ports used by this program.\n");
-		return 0;											 
-    }
+	fprintf(stderr,	"Privileged instruction exception has occured!\n\n"
+			"To use this program under Windows NT or Windows 2000\n"
+			"you need to install the driver 'UserPort.SYS' and grant\n"
+			"access to the ports used by this program.\n");
+		return 0;
+}
 	
 
 	/* To enable Bidirectional data transfer just set the "Bidirectional" bit (bit 5) in control register. */
-	write_data(0x37A, 32);
 
 	/* Parallel port address */
 	return 0x378;
@@ -124,7 +171,11 @@ int write_data(int fd, unsigned char data) {
 }
 
 int read_data(int fd, unsigned char *data) { 
-	*data = _inp(fd); 
+	write_data(0x37A, 32);		/* read on */
+	usleep_win(1000);
+	*data = _inp(fd); 		/* fetch the data */
+	write_data(0x37A, 0);		/* write on */
+	usleep_win(1000);
 	return 0;
 }
 

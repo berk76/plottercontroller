@@ -64,7 +64,6 @@ static void switch_x_y(PRINTER *p, int value);
 static void switch_direction(PRINTER *p, int value);
 static int check_cross_limits(PRINTER *p);
 static void sync_virt_curr_position(PRINTER *p);
-static void print_port_status(PRINTER *p);
 static void set_bit(DATA *data, int pos, int value);
 
 
@@ -366,26 +365,6 @@ static void sync_virt_curr_position(PRINTER *p) {
 
 	p->data = data;
 	dirty_pen(p, p->virtual_pen);
-}
-
-
-/*
-*	Print status
-*/
-static void print_port_status(PRINTER *p) {
-	DATA data = p->data;
-
-	printf("--status--\n");
-	int i;
-	for (i = 0; i < 8; i++) {
-		printf("%d  ", i);
-	}
-	printf("\n");
-	for (i = 0; i < 8; i++) {
-		printf("%u  ", (check_bit(data, i) == 0) ? 0 : 1);
-	}
-	printf("\n");
-	printf("----------\n");
 }
 
 

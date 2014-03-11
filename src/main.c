@@ -13,7 +13,18 @@
 #include "hpgl.h"
 #include "main.h"
 
-#define DEVICE "/dev/parport0" 
+#ifdef __linux__
+#define DEVICE "/dev/parport0"
+#endif
+
+#ifdef __FreeBSD__
+#define DEVICE "/dev/ppi0" 
+#endif
+
+#ifdef _WIN32
+#define DEVICE "0x378" 
+#endif
+
 
 
 static int show_menu(PRINTER *prn);
@@ -44,7 +55,7 @@ int main(int argc, char **argv) {
 
 static int show_menu(PRINTER *prn) {
 	printf("PlotterController\n");
-	printf("Build 20140220\n");
+	printf("Build 20140311\n");
 	printf("---------------------------\n\n");
 
 	printf("1) Test page\n");
