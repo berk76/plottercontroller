@@ -43,7 +43,7 @@ void hpgl_draw_from_file(PRINTER *p, char *file_name) {
 		if ((c == ';') || (strlen(cmd) == MAX_CMD_LEN)) {
 			process_cmd(p, cmd);
 			*cmd = '\0';
-			int len = 0;
+			len = 0;
 		} else {
 			strncat(cmd, &c, 1);
 			len++;
