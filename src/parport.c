@@ -81,7 +81,7 @@ int open_parport(char *device) {
 	int fd = open(device, O_RDWR);
 	if(fd < 0) {
 		perror(device);
-		return -1;
+		return 0;
 	}
 
 	return fd;
