@@ -6,6 +6,7 @@
 
 
 #include <stdio.h>
+#include <string.h>
 #include <math.h>
 #include "printer.h"
 #include "graph.h"
@@ -25,6 +26,8 @@
 #define DEVICE "0x378" 
 #endif
 
+#define BUFF_LEN 256
+static char device[BUFF_LEN];
 
 
 static int show_menu(PRINTER *prn);
@@ -42,7 +45,18 @@ int main(int argc, char **argv) {
 
 	PRINTER *prn;
 
-	if ((prn = pr_create_printer(DEVICE)) == NULL) {
+	printf("Select plotter port: (%s): ", DEVICE);
+	fgets(device, BUFF_LEN - 1, stdin);
+
+	if ((device[strlen(device) - 1]) == '\n') {
+		device[strlen(device) - 1] = '\0';
+	}
+
+	if (strlen(device) == 0) {
+		strncpy(device, DEVICE, BUFF_LEN - 1);
+	}
+
+	if ((prn = pr_create_printer(device)) == NULL) {
 		fprintf(stderr, "Error: Cannot access port\n");
 		return -1;
 	}
@@ -54,9 +68,11 @@ int main(int argc, char **argv) {
 }
 
 static int show_menu(PRINTER *prn) {
+	printf("---------------------------\n");
 	printf("PlotterController\n");
-	printf("Build 20140311\n");
-	printf("---------------------------\n\n");
+	printf("Build 20140516\n");
+	printf("---------------------------\n");
+	printf("Plotter port: %s \n\n", device);
 
 	printf("1) Test page\n");
 	printf("2) Cone demo\n");
