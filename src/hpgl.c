@@ -25,19 +25,20 @@ static int getParamAsInt(char *cmd, int which);
 
 /* Draw hpgl file */
 void hpgl_draw_from_file(PRINTER *p, char *file_name) {
-
 	FILE *fr;
+	char c;
+	char cmd[MAX_CMD_LEN + 1];
+	int len;
+
 	if ((fr = fopen(file_name, "r")) == NULL) {
 		printf("Error: Cannot open file %s for reading\n", file_name);
 		return;
 	}
 
 	pr_init(p);
-
-	char c;
-	char cmd[MAX_CMD_LEN + 1];
 	*cmd = '\0';
-	int len = 0;
+	len = 0;
+
 	while ((c = getc(fr)) != EOF) {
 
 		if ((c == ';') || (strlen(cmd) == MAX_CMD_LEN)) {
@@ -51,7 +52,6 @@ void hpgl_draw_from_file(PRINTER *p, char *file_name) {
 	}
 
 	fclose(fr);
-
 	xy_hm(p);
 }
 
@@ -139,8 +139,11 @@ static void process_cmd(PRINTER *p, char *cmd) {
 
 /* Plot Absolute */
 static void hpgl_pa(PRINTER *p, char *cmd) {
-	int x = scale * (double) getParamAsInt(cmd, 0);
-	int y = scale * (double) getParamAsInt(cmd, 1);
+	int x, y;
+
+	x = scale * (double) getParamAsInt(cmd, 0);
+	y = scale * (double) getParamAsInt(cmd, 1);
+
 	if (pen) {
 		xy_va(p, x, y);
 	} else {
@@ -150,8 +153,11 @@ static void hpgl_pa(PRINTER *p, char *cmd) {
 
 /* Plot Relative */
 static void hpgl_pr(PRINTER *p, char *cmd) {
-	int x = scale * (double) getParamAsInt(cmd, 0);
-	int y = scale * (double) getParamAsInt(cmd, 1);
+	int x, y;
+
+	x = scale * (double) getParamAsInt(cmd, 0);
+	y = scale * (double) getParamAsInt(cmd, 1);
+
 	if (pen) {
 		xy_vr(p, x, y);
 	} else {
@@ -161,17 +167,24 @@ static void hpgl_pr(PRINTER *p, char *cmd) {
 
 /* Circle */
 static void hpgl_ci(PRINTER *p, char *cmd) {
-	int r = scale * (double) getParamAsInt(cmd, 0);
+	int r;
+	r = scale * (double) getParamAsInt(cmd, 0);
 	xy_cr(p, r);
 }
 
 /* Extracts parameters from cmd */
 static int getParamAsInt(char *cmd, int which) {
-	char *p = cmd;
+	char *p;
+	int i;
+
+	p = cmd;
+
 	if (*p != '\0' && *(p + 1) != '\0') {
 		p += 2;
 	}
-	int i = 0;
+
+	i = 0;
+
 	while (*p != '\0') {
 		if (i == which) {
 			return atoi(p);

@@ -28,14 +28,14 @@ extern int write_data(int fd, unsigned char data);
 extern int read_data(int fd, unsigned char *data);
 
 /*
-*	Windows does not have usleep
+*	usleep macro
 */
-#ifdef _WIN32
-extern void usleep_win (long usec);
-#define USLEEP(t) (usleep_win(t))
+#ifdef __TURBOC__
+#include <dos.h>
+#define USLEEP(t) (delay(t))
 #else
 #include <unistd.h>
 #define USLEEP(t) (usleep(t))
-#endif /* _WIN32 */
+#endif
 
 #endif

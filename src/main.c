@@ -22,7 +22,7 @@
 #define DEVICE "/dev/ppi0" 
 #endif
 
-#ifdef _WIN32
+#ifdef __TURBOC__
 #define DEVICE "0x378" 
 #endif
 
@@ -41,8 +41,7 @@ static void limits_demo(PRINTER *prn);
 static void hpgl_demo(PRINTER *prn);
 
 
-int main(int argc, char **argv) {
-
+int main(void) {
 	PRINTER *prn;
 
 	printf("Select plotter port: (%s): ", DEVICE);
@@ -60,7 +59,7 @@ int main(int argc, char **argv) {
 		fprintf(stderr, "Error: Cannot access port\n");
 		return -1;
 	}
-	
+
 	while (show_menu(prn) != '0');
 
 	pr_close_printer(prn);
@@ -68,6 +67,8 @@ int main(int argc, char **argv) {
 }
 
 static int show_menu(PRINTER *prn) {
+	int c;
+
 	printf("---------------------------\n");
 	printf("PlotterController\n");
 	printf("Build 20140516\n");
@@ -86,7 +87,7 @@ static int show_menu(PRINTER *prn) {
 	printf("\n");
 	printf("Choose your option...\n");
 
-	int c = getchar();
+	c = getchar();
 	while (getchar() != '\n');
 
 	switch (c) {
@@ -110,9 +111,14 @@ static int show_menu(PRINTER *prn) {
 }
 
 static void test_page(PRINTER *prn) {
+	POSITION paper;
+	int x, y, r, n;
+	int i;
+	int dir;
+
 	pr_init(prn);
-	POSITION paper = pr_get_max_position(prn);
-	
+	paper = pr_get_max_position(prn);
+
 	xy_va(prn, paper.x, 0);
 	xy_va(prn, paper.x, paper.y);
 	xy_va(prn, 0, paper.y);
@@ -125,18 +131,18 @@ static void test_page(PRINTER *prn) {
 	xy_write(prn, "TEST PAGE");
 
 	xy_vs(prn, 8);
-	int x = paper.x / 2;
-	int y = paper.y / 2;
-	int r = 800;
-	int n = 12;
+	x = paper.x / 2;
+	y = paper.y / 2;
+	r = 800;
+	n = 12;
 
-	int i;
-	int dir = 0;
+	dir = 0;
 	for (i = 0; i < n; i ++) {
-		int x1 = x + r * sin(M_PI / (double) n * (double) i); 
-		int y1 = y + r * cos(M_PI / (double) n * (double) i);
-		int x2 = x - r * sin(M_PI / (double) n * (double) i);
-		int y2 = y - r * cos(M_PI / (double) n * (double) i);
+		int x1, y1, x2, y2;
+		x1 = x + r * sin(M_PI / (double) n * (double) i);
+		y1 = y + r * cos(M_PI / (double) n * (double) i);
+		x2 = x - r * sin(M_PI / (double) n * (double) i);
+		y2 = y - r * cos(M_PI / (double) n * (double) i);
 		if (dir == 0) {
 			xy_ma(prn, x1, y1);
 			xy_va(prn, x2, y2);
@@ -165,28 +171,34 @@ static void test_page(PRINTER *prn) {
 }
 
 static void cone_demo(PRINTER *prn) {
-	pr_init(prn);
-	POSITION paper = pr_get_max_position(prn);
-
-	int rx = 200;
-	int ry = 600;
-	int h = 1500;
-	int n = 30;
-
-	int cx1 = (paper.x - h) / 2;
-	int cy1 = paper.y / 2;
-
-	int cx2 = (paper.x - h) / 2 + h;
-	int cy2 = paper.y / 2;
-	int step = 360 / n;
-
-	int dir = 0;
+	POSITION paper;
+	int rx, ry, h, n;
+	int cx1, cy1, cx2, cy2;
+	int step, dir;
 	int i;
+
+	pr_init(prn);
+	paper = pr_get_max_position(prn);
+
+	rx = 200;
+	ry = 600;
+	h = 1500;
+	n = 30;
+
+	cx1 = (paper.x - h) / 2;
+	cy1 = paper.y / 2;
+
+	cx2 = (paper.x - h) / 2 + h;
+	cy2 = paper.y / 2;
+	step = 360 / n;
+
+	dir = 0;
 	for (i = 0; i < 360; i += step) {
-		int x1 = (double) rx * sin(M_PI / 180 * i) + cx1;
-		int y1 = (double) ry * cos(M_PI / 180 * i) + cy1;
-		int x2 = (double) rx * sin(M_PI / 180 * (i + 12 * step)) + cx2;
-		int y2 = (double) ry * cos(M_PI / 180 * (i + 12 * step)) + cy2;
+		int x1, y1, x2, y2;
+		x1 = (double) rx * sin(M_PI / 180 * i) + cx1;
+		y1 = (double) ry * cos(M_PI / 180 * i) + cy1;
+		x2 = (double) rx * sin(M_PI / 180 * (i + 12 * step)) + cx2;
+		y2 = (double) ry * cos(M_PI / 180 * (i + 12 * step)) + cy2;
 		if (dir == 0) {
 			xy_ma(prn, x1, y1);
 			xy_va(prn, x2, y2);
@@ -202,11 +214,14 @@ static void cone_demo(PRINTER *prn) {
 }
 
 static void circles_demo(PRINTER *prn) {
-	pr_init(prn);
-	POSITION paper = pr_get_max_position(prn);
+	POSITION paper;
+	int r, dist;
 
-	int r = 250;
-	int dist = 30;
+	pr_init(prn);
+	paper = pr_get_max_position(prn);
+
+	r = 250;
+	dist = 30;
 
 	xy_ma(prn, paper.x / 2 + r * 2 + dist, paper.y / 2 + r / 2 + dist);
 	xy_cr(prn, r);
@@ -233,13 +248,15 @@ static void circles_demo(PRINTER *prn) {
 }
 
 static void text_demo(PRINTER *prn) {
+	POSITION paper;
+	int i;
+
 	pr_init(prn);
-	POSITION paper = pr_get_max_position(prn);
+	paper = pr_get_max_position(prn);
 
 	xy_set_font_size(5);
 	xy_vs(prn, 7);
 
-	int i;
 	for (i = 0; i < 16; i++) {
 		xy_set_text_angle(M_PI * 2 / 16 * i);
 		xy_ma(prn, paper.x / 2, paper.y / 2);
@@ -252,14 +269,17 @@ static void text_demo(PRINTER *prn) {
 
 
 static void triangle_demo(PRINTER *prn) {
-	pr_init(prn);
-	POSITION paper = pr_get_max_position(prn);
-
-	double l = 1600;
-	double h = l * cos(M_PI_2 / 3.0);
-	double d = 80;
-
+	POSITION paper;
 	D_POSITION p;
+	double l, h, d;
+
+	pr_init(prn);
+	paper = pr_get_max_position(prn);
+
+	l = 1600;
+	h = l * cos(M_PI_2 / 3.0);
+	d = 80;
+
 	p.x = paper.x / 2 - h / 2;
 	p.y = paper.y / 2 - l / 2;
 	draw_triangle_fragment(prn, p, l, d, 0);
@@ -276,18 +296,22 @@ static void triangle_demo(PRINTER *prn) {
 }
 
 static void draw_triangle_fragment(PRINTER * prn, D_POSITION vertex, double len, double distance, double angle) {
-
-	double h = len * cos(M_PI_2 / 3.0);
-
-	D_POSITION p = _transform_position(h, len / 2, angle);
-	int x1s = vertex.x + p.x;
-	int y1s = vertex.y + p.y;
-	int x2s = vertex.x;
-	int y2s = vertex.y;
-
+	D_POSITION p;
+	double h;
+	int x1s, y1s, x2s, y2s;
 	double x1, x2, y1, y2;
 	int i;
-	int dir = 0;
+	int dir;
+
+	h = len * cos(M_PI_2 / 3.0);
+
+	p = _transform_position(h, len / 2, angle);
+	x1s = vertex.x + p.x;
+	y1s = vertex.y + p.y;
+	x2s = vertex.x;
+	y2s = vertex.y;
+
+	dir = 0;
 	for (i = 0; i < len / distance; i++) {
 		p = _transform_position(distance * cos(M_PI_2 / 3.0) * (double) i, distance * sin(M_PI_2 / 3.0) * (double) i, angle);
 		x1 = x1s - p.x;
@@ -309,8 +333,11 @@ static void draw_triangle_fragment(PRINTER * prn, D_POSITION vertex, double len,
 }
 
 static void limits_demo(PRINTER *prn) {
+	POSITION paper;
+	int i;
+
 	pr_init(prn);
-	POSITION paper = pr_get_max_position(prn);
+	paper = pr_get_max_position(prn);
 
 	xy_va(prn, paper.x, 0);
 	xy_va(prn, paper.x, paper.y);
@@ -318,7 +345,6 @@ static void limits_demo(PRINTER *prn) {
 	xy_va(prn, 0, 0);
 
 	xy_ma(prn, paper.x / 2, paper.y / 2);
-	int i;
 	for (i = 1; i < 6; i++) {
 		xy_cr(prn, 300 * i);
 	}
@@ -328,6 +354,7 @@ static void limits_demo(PRINTER *prn) {
 
 static void hpgl_demo(PRINTER *prn) {
 	char file_name[100];
+
 	printf("Enter HPGL file name: ");
 	scanf("%99s", file_name);
 	while (getchar() != '\n');
