@@ -71,13 +71,14 @@ static void set_bit(DATA *data, int pos, int value);
 *	Create printer instance
 */
 PRINTER *pr_create_printer(char *device_name) {
+	PRINTER *result;
 	int fd;
 
 	if ((fd = open_parport(device_name)) == 0) {
 		return NULL;
 	}
 
-	PRINTER *result = (PRINTER *) malloc(sizeof(PRINTER));
+	result = (PRINTER *) malloc(sizeof(PRINTER));
 
 	result->parport_fd = fd;
 	result->max_position.x = MAX_X;
@@ -123,12 +124,12 @@ void pr_init(PRINTER *p) {
 	switch_direction(p, 0);
 
 	if (!is_ready(p)) {
+		int i;
 		while (!is_ready(p)) {
 			dirty_step(p);
 		}
 
 		switch_direction(p, 1);
-		int i;
 		for (i = 0; i < 50; i++) {
 			dirty_step(p);
 		}
@@ -241,6 +242,8 @@ void pr_move(PRINTER *p, int xy, int direction, int repeat) {
 *	Is ready test
 */
 static int is_ready(PRINTER *p) {
+	DATA data;
+
 	set_bit(&(p->data), READY_BIT, 0);
 	write_data(p->parport_fd, p->data);
 	USLEEP(speed[p->velocity]);
@@ -249,7 +252,6 @@ static int is_ready(PRINTER *p) {
 	write_data(p->parport_fd, p->data);
 	USLEEP(speed[p->velocity]);
 
-	DATA data;
 	read_data(p->parport_fd, &data);
 	return (check_bit(data, READY_BIT) == 0);
 }
@@ -259,8 +261,10 @@ static int is_ready(PRINTER *p) {
 *	Do step
 */
 static void step(PRINTER *p, int repeat) {
-	int step_dir = (check_bit(p->data, DIRECTION_BIT) == 0) ? -1 : 1;
+	int step_dir;
 	int i;
+
+	step_dir = (check_bit(p->data, DIRECTION_BIT) == 0) ? -1 : 1;
 	for (i = 0; i < repeat; i++) {
 		
 		if (check_bit(p->data, XY_BIT) == 0) {
@@ -313,8 +317,11 @@ static void switch_direction(PRINTER *p, int value) {
 *	Check cross limits
 */
 static int check_cross_limits(PRINTER *p) {
-	int previous = p->out_of_limits;
-	int current = (p->virtual_position.x > p->max_position.x) 
+	int previous;
+	int current;
+
+	previous = p->out_of_limits;
+	current = (p->virtual_position.x > p->max_position.x) 
 			|| (p->virtual_position.x < 0)
 			|| (p->virtual_position.y > p->max_position.y)
 			|| (p->virtual_position.y < 0);
@@ -342,8 +349,10 @@ static int check_cross_limits(PRINTER *p) {
 *	repeat		1 step = 0.1 mm
 */
 static void sync_virt_curr_position(PRINTER *p) {
-	DATA data = p->data;
+	DATA data;
 	int i;
+
+	data = p->data;
 
 	if (p->curr_position.x != p->virtual_position.x) {
 		switch_x_y(p, 1);

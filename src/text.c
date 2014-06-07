@@ -43,11 +43,12 @@ void xy_set_text_angle(double angle) {
 
 /* Write text */
 void xy_write(PRINTER *p, char *text) {
+	char *p_t;
+
 	if (load_font(FONT_DEFINITION_FILE) != 0) {
 		return;
 	}
 
-	char *p_t;
 	for (p_t = text; *p_t != '\0'; p_t++) {
 		draw_char(p, *p_t);
 	}
@@ -58,14 +59,16 @@ void xy_write(PRINTER *p, char *text) {
 
 /* draw char */
 static void draw_char(PRINTER *p, unsigned char c) {
+	char *s;
+	int cmd[FONT_CMD_SIZE];
+	D_POSITION pos;
+
 	if (c < 32) {
 		printf("char(%d)\n", c);
 		return;
 	}
 
-	char *s = font[c - 32];
-	int cmd[FONT_CMD_SIZE];
-	D_POSITION pos;
+	s = font[c - 32];
 	
 	while ((s = get_first_command(s, cmd, FONT_CMD_SIZE)) != NULL) {
 		pos = _transform_position(cmd[1] * char_size, cmd[2] * char_size, text_angle);
@@ -122,6 +125,10 @@ static char * get_first_command(char *s, int cmd[], int size) {
 
 /* Load font */
 static int load_font(char *font_definition_file) {
+	FILE *fr;
+	char line[2048];
+	int i = 0;
+
 	if (font != NULL) free_font();
 
 	if ((font = (char **) malloc(FONT_TABLE_SIZE * sizeof(char *))) == NULL) {
@@ -129,15 +136,12 @@ static int load_font(char *font_definition_file) {
 		return -1;
 	}
 
-	FILE *fr;
-
 	if ((fr = fopen(font_definition_file, "r")) == NULL) {
 		printf("Error: Cannot open file %s for reading\n", font_definition_file);
 		return -1;
 	}
 
-	char line[2048];
-	int i = 0;
+	i = 0;
 	while (fgets(line, sizeof(line), fr) != NULL) {
 
 		if ((strlen(line) > 0) && strncmp(line, "#", 1) && strncmp(line, "\n", 1)) {
@@ -171,10 +175,10 @@ static int load_font(char *font_definition_file) {
 
 /* Free font */
 static void free_font(void) {
+	int i;
 
 	if (font == NULL) return;
 
-	int i;
 	for (i = 0; i < FONT_TABLE_SIZE ; i++) {
 		if (font[i] != NULL) {
 			free((void *) font[i]);

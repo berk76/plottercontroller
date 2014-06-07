@@ -9,21 +9,29 @@ program for XY41xx plotters and other small plotters. Project is written
 in C programming language with place emphasis on portability and extensibility.
 
 
-2 Supported hardware
+2 Hardware supported
 --------------------
 
 2.1 Currently supported hardware
 --------------------------------
 * Linux -> /dev/parportx -> XY41xx
-This configuration is tested very well. You only need to make sure you have
+This port is tested very well. You only need to make sure you have
 rights for reading from and writing to /dev/parportx device.
 
 * FreeBSD -> /dev/ppix -> XY41xx
-This configuration is tested very well. You only need to make sure you have
+This port is tested very well. You only need to make sure you have
 rights for reading from and writing to /dev/ppix device.
 
+* FreeDOS -> LPTx -> XY41xx
+This port is tested well with Borland Turbo C 2.01 which is available for free:
+http://edn.embarcadero.com/article/20841
+
+ - use turbo c and file PLOTTER.PRJ located in src directory
+ - make sure font1.fnt is present in the same direcroty a PLOTTER.EXE
+ - this should be working in any kind of DOS OS
+
 * MS Windows -> LPTx -> XY41xx
-This configuration is not tested well. In some versions of Winows OS you need 
+This port is not tested well. In some versions of Winows OS you need 
 additional software (such as userport or porttalk22) for enabling direct access 
 to LPTx ports. See following link:
 

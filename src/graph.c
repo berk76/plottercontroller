@@ -17,21 +17,23 @@ static void xy_flush_moving_buffer(PRINTER *p);
 
 /* Move Absolute */
 void xy_ma(PRINTER *p, int x, int y) {
-	POSITION pos = pr_get_current_position(p);
+	POSITION pos;
+	pos = pr_get_current_position(p);
 	xy_mr(p, x - pos.x, y - pos.y);
 }
 
 /* Move Relative */
 void xy_mr(PRINTER *p, int x, int y) {
+	POSITION buff;
 	xy_pen_up(p);
-	POSITION buff = pr_get_moving_buffer(p);
+	buff = pr_get_moving_buffer(p);
 	pr_set_moving_buffer(p, buff.x + x, buff.y + y);
 }
 
 /* Vector Absolute */
 void xy_va(PRINTER *p, int x, int y) {
-	//printf("xy_va X=%d, Y=%d\n", x, y);
-	POSITION pos = pr_get_current_position(p);
+	POSITION pos;
+	pos = pr_get_current_position(p);
 	xy_pen_down(p);
 	xy_move_rel(p, x - pos.x, y - pos.y);
 }
@@ -44,7 +46,8 @@ void xy_vr(PRINTER *p, int x, int y) {
 
 /* Point Absolute */
 void xy_pa(PRINTER *p, int x, int y) {
-	POSITION pos = pr_get_current_position(p);
+	POSITION pos;
+	pos = pr_get_current_position(p);
 	xy_pen_up(p);
 	xy_move_rel(p, x - pos.x, y - pos.y);
 	xy_pen_down(p);
@@ -71,18 +74,22 @@ void xy_cr(PRINTER *p, int r) {
 
 /* Arcus */
 void xy_ar(PRINTER *p, int r, double start_arc, double end_arc) {
-	POSITION pos = pr_get_current_position(p);
+	POSITION pos;
+	int start_deg, end_deg;
+	int x, y;
+	int i;
+
+	pos = pr_get_current_position(p);
 	xy_og(p, pos.x, pos.y);
 
-	int start_deg = start_arc * 180 / M_PI;
-	int end_deg = end_arc * 180 / M_PI;
+	start_deg = start_arc * 180 / M_PI;
+	end_deg = end_arc * 180 / M_PI;
 
-	int x = (double) r * cos(start_arc);
-	int y = (double) r * sin(start_arc);
+	x = (double) r * cos(start_arc);
+	y = (double) r * sin(start_arc);
 	xy_ma(p, x, y);
 	xy_pen_down(p);
 
-	int i;
 	for (i = start_deg; i <= end_deg; i++) {
 		x = (double) r * cos((double) i / 180 * M_PI);
 		y = (double) r * sin((double) i / 180 * M_PI);
@@ -117,12 +124,15 @@ D_POSITION _transform_position(double x, double y, double angle) {
 
 /* Just Move */
 static void xy_move_rel(PRINTER *p, int x, int y) {
-	//printf("xy_move_rel X=%d, Y=%d\n", x, y);
+	double x_step, y_step;
+	int ax, ay;
+	int i;
+	int step;
 
-	double x_step = 0;
-	double y_step = 0;
-	int ax = abs(x);
-	int ay = abs(y);
+	x_step = 0;
+	y_step = 0;
+	ax = abs(x);
+	ay = abs(y);
 
 	if (ax > ay) {
 		if (y != 0) {
@@ -142,12 +152,12 @@ static void xy_move_rel(PRINTER *p, int x, int y) {
 		}
 	}
 
-	int i = 0;
+	i = 0;
 	while ((ax != 0) || (ay != 0)) {
 		i++;
 
 		/* move x */
-		int step = (x_step * i) - (abs(x) - ax);
+		step = (x_step * i) - (abs(x) - ax);
 		step = (ax >= step) ? step : ax;
 		pr_move(p, 1, ((x > 0) ? 1 : 0), step);
 		ax -= step;
