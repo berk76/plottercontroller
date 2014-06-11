@@ -22,7 +22,7 @@
 #define DEVICE "/dev/ppi0" 
 #endif
 
-#ifdef __TURBOC__
+#if defined(__TURBOC__) || defined(_WIN32)
 #define DEVICE "0x378" 
 #endif
 
@@ -71,7 +71,7 @@ static int show_menu(PRINTER *prn) {
 
 	printf("---------------------------\n");
 	printf("PlotterController\n");
-	printf("Build 20140516\n");
+	printf("%s\n", PLOTTER_CONTROLLER_VERSION);
 	printf("---------------------------\n");
 	printf("Plotter port: %s \n\n", device);
 
