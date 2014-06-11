@@ -30,12 +30,20 @@ extern int read_data(int fd, unsigned char *data);
 /*
 *	usleep macro
 */
-#ifdef __TURBOC__
-#include <dos.h>
-#define USLEEP(t) (delay(t))
-#else
+
+#if defined(__linux__) || defined(__FreeBSD__) 
 #include <unistd.h>
 #define USLEEP(t) (usleep(t))
 #endif
 
+#ifdef __TURBOC__
+#include <dos.h>
+#define USLEEP(t) (delay(t))
 #endif
+
+#ifdef _WIN32
+extern void usleep_win (long usec);
+#define USLEEP(t) (usleep_win(t))
+#endif
+
+#endif //_PARPORT_H
