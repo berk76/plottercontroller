@@ -46,4 +46,4 @@ extern void usleep_win (long usec);
 #define USLEEP(t) (usleep_win(t))
 #endif
 
-#endif //_PARPORT_H
+#endif
