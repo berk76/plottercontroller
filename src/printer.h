@@ -15,7 +15,6 @@ typedef struct {
 typedef unsigned char DATA;
 
 typedef struct {
-	int		parport_fd;
 	POSITION	max_position;
 	POSITION	curr_position;
 	POSITION	origin_position;
@@ -23,14 +22,38 @@ typedef struct {
 	POSITION	virtual_position;
 	int		virtual_pen;
 	int		out_of_limits;
-	DATA		data;
 	int		velocity;
+        int (*close)();
+        void (*set_pen)(int i);
+        void (*set_step)(int i);
+        void (*set_xy)(int i);
+        int (*is_xy)();
+        void (*set_plus_minus)(int i);
+        int (*is_plus_minus)();
+        void (*set_ready)(int i);
+        int (*is_ready)();
 } PRINTER;
+
+enum INTERFACE {
+        PARPORT,
+        GPIO
+};
 
 /*
 *	Create printer instance
+*	
+*	Linux
+*       pr_create_printer(PARPORT, "/dev/parport0")
+*       FreeBSD
+*       pr_create_printer(PARPORT, "/dev/ppi0")
+*       DOS
+*       pr_create_printer(PARPORT, "0x378")
+*       RPi v1
+*       pr_create_printer(GPIO, "1")
+*       RPi v2
+*       pr_create_printer(GPIO, "2")
 */
-extern PRINTER *pr_create_printer(char *device_name);
+extern PRINTER *pr_create_printer(enum INTERFACE i, char *param);
 
 /*
 *	Close printer instance

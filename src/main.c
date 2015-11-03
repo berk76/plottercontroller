@@ -14,21 +14,6 @@
 #include "hpgl.h"
 #include "main.h"
 
-#ifdef __linux__
-#define DEVICE "/dev/parport0"
-#endif
-
-#ifdef __FreeBSD__
-#define DEVICE "/dev/ppi0" 
-#endif
-
-#if defined(__TURBOC__) || defined(_WIN32)
-#define DEVICE "0x378" 
-#endif
-
-#define BUFF_LEN 256
-static char device[BUFF_LEN];
-
 
 static int show_menu(PRINTER *prn);
 static void test_page(PRINTER *prn);
@@ -44,18 +29,21 @@ static void hpgl_demo(PRINTER *prn);
 int main(void) {
 	PRINTER *prn;
 
-	printf("Select plotter port: (%s): ", DEVICE);
-	fgets(device, BUFF_LEN - 1, stdin);
-
-	if ((device[strlen(device) - 1]) == '\n') {
-		device[strlen(device) - 1] = '\0';
-	}
-
-	if (strlen(device) == 0) {
-		strncpy(device, DEVICE, BUFF_LEN - 1);
-	}
-
-	if ((prn = pr_create_printer(device)) == NULL) {
+        /*
+	Examples:
+                Linux
+                prn = pr_create_printer(PARPORT, "/dev/parport0")
+                FreeBSD
+                prn = pr_create_printer(PARPORT, "/dev/ppi0")
+                DOS
+                prn = pr_create_printer(PARPORT, "0x378")
+                RPi v1
+                prn = pr_create_printer(GPIO, "1")
+                RPi v2
+                prn = pr_create_printer(GPIO, "2")
+        */
+        
+	if ((prn = pr_create_printer(GPIO, "2")) == NULL) {
 		fprintf(stderr, "Error: Cannot access port\n");
 		return -1;
 	}
@@ -73,7 +61,6 @@ static int show_menu(PRINTER *prn) {
 	printf("PlotterController\n");
 	printf("%s\n", PLOTTER_CONTROLLER_VERSION);
 	printf("---------------------------\n");
-	printf("Plotter port: %s \n\n", device);
 
 	printf("1) Test page\n");
 	printf("2) Cone demo\n");
