@@ -1,18 +1,140 @@
 /*
-*	parport.c
-*	10.1.2014
+*	par_port.h
+*	13.10.2015
 *	Jaroslav Beran (jaroslav.beran@gmail.com)
 */
 
+/*
+ *					PLOTTER
+ *		PC-printer port        XY4131	XY4140 	      XY4150
+ *	bit 2	 4 ------------------ 1 ----------- 1 ----------- 1	PEN
+ *	bit 3 	 5 ------------------ 2 ----------- 2 ----------- 2	STEP
+ *	bit 1	 3 ------------------ 3 ----------- 3 ----------- 3	X/Y
+ *	bit 0	 2 ------------------ 4 ----------- 4 ----------- 4	+/-
+ *	bit 4	 6 ------------------ 5 ----------- 5 ----------- 5	READY
+ *	GND	18 ------------------ 6 ----------- 6 ----------- 6	GND
+ *
+ *	The parallel port (or printer port, IEEE1284 standard) has 8 data lines
+ *	
+ *	Pin	Function	Dir
+ *	1	/STROBE	W
+ *	2..9	DATA Bit0..7	R/W
+ *	10	ACK	R
+ *	11	/BUSY	R
+ *	12	PAPEROUT	R
+ *	13	SELECT	R
+ *	14	/AUTOFD	W
+ *	15	ERROR	R
+ *	16	INIT	W
+ *	17	/SELECT	W
+ *	18..25	GND	-
+ *
+ *	Signals with a / prefix are low-active (i.e. writing logic 1 to them 
+ *	results in 0 Volt output, writing logic 0 results in 5 volts on the output).
+ *
+ */
 
 #include <stdio.h> 
-#include "parport.h"
+#include "par_port.h"
+
+
+#define PEN_BIT 2
+#define STEP_BIT 3
+#define XY_BIT 1		/* L = CART, H = PAPER */
+#define DIRECTION_BIT 0		/* L = TO LEFT (FORWARD), H = TO RIGHT (BACK) */
+#define READY_BIT 4		/* L = READY, H = NOT READY */
+
+#define check_bit(var,pos) ((var) & (1<<(pos)))
+
+typedef unsigned char DATA;
+
+/* Static variables */
+static DATA data;
+static int fd;
+
+
+/* Static functions */
+static void set_bit(DATA *data, int pos, int value);
+static int open_parport(char *device);
+static int close_parport(int fd);
+static int write_data(int fd, unsigned char data);
+static int read_data(int fd, unsigned char *data);
+
+
+
+int par_open(char *device) {
+        data = 0;
+	if ((fd = open_parport(device)) == 0) {
+		return -1;
+	}
+        return 0;
+}
+
+
+int par_close() {
+        return close_parport(fd);
+}
+
+
+void par_set_pen(int i) {
+        set_bit(&data, PEN_BIT, i);
+	write_data(fd, data);
+}
+
+
+void par_set_step(int i) {
+        set_bit(&data, STEP_BIT, i);
+	write_data(fd, data);
+}
+
+
+void par_set_xy(int i) {
+        set_bit(&data, XY_BIT, i);
+}
+
+
+int par_is_xy() {
+        return check_bit(data, XY_BIT);
+}
+
+
+void par_set_plus_minus(int i) {
+        set_bit(&data, DIRECTION_BIT, i);
+}
+
+
+int par_is_plus_minus() {
+        return check_bit(data, DIRECTION_BIT);
+}
+
+
+void par_set_ready(int i) {
+        set_bit(&data, READY_BIT, i);
+        write_data(fd, data);
+}
+
+
+int par_is_ready() {
+        read_data(fd, &data);
+	return (check_bit(data, READY_BIT) == 0);
+}
+
+
+void set_bit(DATA *data, int pos, int value) {
+	if (value == 0) {
+		*data &= ~(1<<pos);
+	} else {
+		*data |= (1<<pos);
+	}
+}
+
 
 /*
 *	Linux implementation
 *	(http://mockmoon-cybernetics.ch/computer/linux/programming/parport.html)
 */
 #ifdef __linux__
+#include <unistd.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <sys/types.h>

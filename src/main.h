@@ -7,6 +7,6 @@
 #ifndef _MAIN_H
 #define _MAIN_H
 
-#define PLOTTER_CONTROLLER_VERSION "Build 20140611"
+#define PLOTTER_CONTROLLER_VERSION "Build 20151015"
 
 #endif
