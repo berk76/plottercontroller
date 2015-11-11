@@ -40,7 +40,7 @@ extern void usleep_win (long usec);
  */
 static int speed[] = {2600,2400,2200,2000,1800,1600,1400,1200,1000,800};
 
-static void dirty_pen(PRINTER *p, int value);
+static void dirty_pen(PRINTER *p, value_pen_t value);
 static int is_ready(PRINTER *p);
 static void step(PRINTER *p, int repeat);
 static void dirty_step(PRINTER *p);
@@ -51,7 +51,7 @@ static void sync_virt_curr_position(PRINTER *p);
 /*
 *	Create printer instance
 */
-PRINTER *pr_create_printer(enum INTERFACE i, char *param) {
+PRINTER *pr_create_printer(interface_t i, char *param) {
 	PRINTER *result;
 
         result = (PRINTER *) malloc(sizeof(PRINTER));
@@ -102,7 +102,7 @@ PRINTER *pr_create_printer(enum INTERFACE i, char *param) {
 	result->moving_buffer.y = 0;
 	result->virtual_position.x = 0;
 	result->virtual_position.y = 0;
-	result->virtual_pen = 0;
+	result->virtual_pen = UP;
 	result->out_of_limits = 0;
 	result->velocity = 8;
 
@@ -115,10 +115,10 @@ PRINTER *pr_create_printer(enum INTERFACE i, char *param) {
 */
 void pr_close_printer(PRINTER *p) {
 	if (p != NULL) {
+                p->close();
 		free((void *) p);
 		p = NULL;
 	}
-        //par_close();
 }
 
 
@@ -126,10 +126,10 @@ void pr_close_printer(PRINTER *p) {
 *	Init printer
 */
 void pr_init(PRINTER *p) {
-        p->set_ready(0);
-	p->set_xy(1);
-	p->set_step(0);
-        p->set_plus_minus(1);
+        p->set_ready(NOREADY);
+	p->set_xy(CART);
+	p->set_step(1);
+        p->set_plus_minus(BACKWARD);
 	USLEEP(speed[p->velocity]);
 
 
@@ -139,7 +139,7 @@ void pr_init(PRINTER *p) {
 			dirty_step(p);
 		}
 
-                p->set_plus_minus(0);
+                p->set_plus_minus(FORWARD);
 		for (i = 0; i < 50; i++) {
 			dirty_step(p);
 		}
@@ -217,7 +217,7 @@ void pr_set_velocity(PRINTER *p, int v) {
 /*
 *	Set pen
 */
-void pr_pen(PRINTER *p, int value) {
+void pr_pen(PRINTER *p, value_pen_t value) {
 	if (p->virtual_pen != value) {
 		p->virtual_pen = value;
 		if (!p->out_of_limits) dirty_pen(p, value);
@@ -228,8 +228,8 @@ void pr_pen(PRINTER *p, int value) {
 /*
 *	Set dirty pen
 */
-static void dirty_pen(PRINTER *p, int value) {
-        p->set_pen(!value);
+static void dirty_pen(PRINTER *p, value_pen_t value) {
+        p->set_pen(value);
 	USLEEP(speed[p->velocity] * 10);
 }
 
@@ -240,9 +240,9 @@ static void dirty_pen(PRINTER *p, int value) {
 *	direction	0 = TO LEFT (FORWARD), 1 = TO RIGHT (BACK)
 *	repeat		1 step = 0.1 mm
 */
-void pr_move(PRINTER *p, int xy, int direction, int repeat) {
-        p->set_xy(!xy);
-        p->set_plus_minus(!direction);
+void pr_move(PRINTER *p, value_xy_t xy, value_direction_t direction, int repeat) {
+        p->set_xy(xy);
+        p->set_plus_minus(direction);
 	step(p, repeat);
 }
 
@@ -252,13 +252,13 @@ void pr_move(PRINTER *p, int xy, int direction, int repeat) {
 */
 static int is_ready(PRINTER *p) {
 
-        p->set_ready(1);
+        p->set_ready(READY);
 	USLEEP(speed[p->velocity]);
 
-	p->set_ready(0);
+	p->set_ready(NOREADY);
 	USLEEP(speed[p->velocity]);
                 
-	return (p->is_ready() == 0);
+	return (p->is_ready() == READY);
 }
 
 
@@ -269,10 +269,10 @@ static void step(PRINTER *p, int repeat) {
 	int step_dir;
 	int i;
 
-	step_dir = (p->is_plus_minus() == 1) ? -1 : 1;
+	step_dir = (p->is_plus_minus() == BACKWARD) ? -1 : 1;
 	for (i = 0; i < repeat; i++) {
 		
-		if (p->is_xy() == 1) {
+		if (p->is_xy() == CART) {
 			p->virtual_position.y += step_dir;
 			if (!check_cross_limits(p) && !p->out_of_limits) {
 				p->curr_position.y += step_dir;
@@ -293,9 +293,9 @@ static void step(PRINTER *p, int repeat) {
 *	Perform dirty step
 */
 static void dirty_step(PRINTER *p) {
-	p->set_step(1);
-	USLEEP(speed[p->velocity]);
 	p->set_step(0);
+	USLEEP(speed[p->velocity]);
+	p->set_step(1);
 	USLEEP(speed[p->velocity]);
 }
 
@@ -315,7 +315,7 @@ static int check_cross_limits(PRINTER *p) {
 
 	if (previous < current) {
 		p->out_of_limits = 1;
-		dirty_pen(p, 0);
+		dirty_pen(p, UP);
 		return 1;
 	}
 
@@ -343,8 +343,8 @@ static void sync_virt_curr_position(PRINTER *p) {
         
 
 	if (p->curr_position.x != p->virtual_position.x) {
-                p->set_xy(0);
-                p->set_plus_minus((p->curr_position.x < p->virtual_position.x));
+                p->set_xy(PAPER);
+                p->set_plus_minus((p->curr_position.x < p->virtual_position.x) ? FORWARD : BACKWARD);
 		for (i = 0; i < abs(p->virtual_position.x - p->curr_position.x); i++) {
 			dirty_step(p);
 		}
@@ -352,8 +352,8 @@ static void sync_virt_curr_position(PRINTER *p) {
 	}
 
 	if (p->curr_position.y != p->virtual_position.y) {
-		p->set_xy(1);
-                p->set_plus_minus((p->curr_position.y < p->virtual_position.y));
+		p->set_xy(CART);
+                p->set_plus_minus((p->curr_position.y < p->virtual_position.y) ? FORWARD : BACKWARD);
 		for (i = 0; i < abs(p->virtual_position.y - p->curr_position.y); i++) {
 			dirty_step(p);
 		}
