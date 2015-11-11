@@ -13,7 +13,7 @@
 
 /* #define BCM2708_PERI_BASE       0x20000000 */
 /* #define BCM2708_PERI_BASE       0x3f000000 */
-static int BCM2708_PERI_BASE;
+static off_t BCM2708_PERI_BASE;
 
 #define GPIO_BASE               (BCM2708_PERI_BASE + 0x200000)
 #define BLOCK_SIZE (4*1024)

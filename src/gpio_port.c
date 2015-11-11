@@ -54,17 +54,17 @@ int gpio_close() {
 
 
 void gpio_set_pen(int i) {
-        gpio_write(GPIO_PEN, i);
+        gpio_write(GPIO_PEN, !i);
 }
 
 
 void gpio_set_step(int i) {
-        gpio_write(GPIO_STEP, i);
+        gpio_write(GPIO_STEP, !i);
 }
 
 
 void gpio_set_xy(int i) {
-        gpio_write(GPIO_XY, i);
+        gpio_write(GPIO_XY, !i);
         status_xy = i;
 }
 
@@ -75,7 +75,7 @@ int gpio_is_xy() {
 
 
 void gpio_set_plus_minus(int i) {
-        gpio_write(GPIO_PLUS_MINUS, i);
+        gpio_write(GPIO_PLUS_MINUS, !i);
         status_plus_minus = i;
 }
 
@@ -86,7 +86,7 @@ int gpio_is_plus_minus() {
 
 
 void gpio_set_ready(int i) {
-        gpio_write(GPIO_SET_READY, i);
+        gpio_write(GPIO_SET_READY, !i);
 }
 
 
