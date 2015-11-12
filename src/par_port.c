@@ -94,7 +94,7 @@ void par_set_xy(int i) {
 
 
 int par_is_xy() {
-        return check_bit(data, XY_BIT);
+        return check_bit(data, XY_BIT) != 0;
 }
 
 
@@ -104,7 +104,7 @@ void par_set_plus_minus(int i) {
 
 
 int par_is_plus_minus() {
-        return check_bit(data, DIRECTION_BIT);
+        return check_bit(data, DIRECTION_BIT) != 0;
 }
 
 
@@ -115,8 +115,9 @@ void par_set_ready(int i) {
 
 
 int par_is_ready() {
-        read_data(fd, &data);
-	return (check_bit(data, READY_BIT) == 0);
+        DATA d;
+        read_data(fd, &d);
+        return (check_bit(d, READY_BIT) != 0);
 }
 
 
