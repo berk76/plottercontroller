@@ -27,23 +27,37 @@ static void hpgl_demo(PRINTER *prn);
 
 
 int main(void) {
+        int c;
 	PRINTER *prn;
 
-        /*
-	Examples:
-                Linux
-                prn = pr_create_printer(PARPORT, "/dev/parport0")
-                FreeBSD
-                prn = pr_create_printer(PARPORT, "/dev/ppi0")
-                DOS
-                prn = pr_create_printer(PARPORT, "0x378")
-                RPi v1
-                prn = pr_create_printer(GPIO, "1")
-                RPi v2
-                prn = pr_create_printer(GPIO, "2")
-        */
+        printf("-----------------\n");
+        printf("Choose interface:\n");
+        printf("-----------------\n");
+        printf("1) Linux PC (/dev/parport0)\n");
+        printf("2) FreeBSD PC (/dev/ppi0)\n");
+        printf("3) DOS PC (0x378)\n");
+        printf("4) Raspberry PI version 1 (GPIO v1)\n");
+        printf("5) Raspberry PI version 2 (GPIO v2)\n\n");
         
-	if ((prn = pr_create_printer(GPIO, "2")) == NULL) {
+        c = getchar();
+	while (getchar() != '\n');
+
+	switch (c) {
+		case '1' :	prn = pr_create_printer(PARPORT, "/dev/parport0");
+				break;
+		case '2' :	prn = pr_create_printer(PARPORT, "/dev/ppi0");
+				break;
+		case '3' :	prn = pr_create_printer(PARPORT, "0x378");
+				break;
+		case '4' :	prn = pr_create_printer(GPIO, "1");
+				break;
+		case '5' :	prn = pr_create_printer(GPIO, "2");
+				break;
+		default :	printf("Bad option\n");
+				return -1;
+	}
+        
+	if (prn == NULL) {
 		fprintf(stderr, "Error: Cannot access port\n");
 		return -1;
 	}
