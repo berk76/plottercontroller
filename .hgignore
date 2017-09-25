@@ -1,5 +1,0 @@
-syntax: glob
-plotter_controller*
-*.bak
-src/*.o
-src/*.bak
