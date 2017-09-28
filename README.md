@@ -12,20 +12,20 @@ in C programming language with focus on portability and extensibility.
 
 ### 2.1 Currently supported hardware
 
-#### Raspberry PI -> GPIO -> XY41xx
+#### 2.1.1 Raspberry PI -> GPIO -> XY41xx
 Please note Raspberry PI works with 3.3V whereas XY41xx works with 5V. For this 
 reason you cannot conect Raspberry directly to XY41xx (this would destroy 
 your Raspberry) - see below. 
 
-#### Linux PC -> /dev/parportx -> XY41xx
+#### 2.1.2 Linux PC -> /dev/parportx -> XY41xx
 You only need to make sure you have rights for reading from and writing to 
 /dev/parportx device.
 
-#### FreeBSD PC -> /dev/ppix -> XY41xx
+#### 2.1.3 FreeBSD PC -> /dev/ppix -> XY41xx
 Also here you only need to make sure you have rights for reading from and 
 writing to /dev/ppix device.
 
-#### FreeDOS -> LPTx -> XY41xx
+#### 2.1.4 FreeDOS -> LPTx -> XY41xx
 This port is tested well with Borland Turbo C 2.01 which is available for free:  
 http://edn.embarcadero.com/article/20841
 
@@ -33,7 +33,7 @@ http://edn.embarcadero.com/article/20841
  * make sure font1.fnt is present in the same direcroty a PLOTTER.EXE
  * this should be working in any kind of DOS OS
 
-#### MS Windows -> LPTx -> XY41xx
+#### 2.1.5 MS Windows -> LPTx -> XY41xx
 This port is not tested well. In some versions of Winows OS you need 
 additional software (such as userport or porttalk22) for enabling direct access 
 to LPTx ports. See following link:
@@ -44,7 +44,7 @@ http://www.drdobbs.com/184409876
 
 ### 2.2 Currently supported interfaces
 
-#### Raspberry PI GPIO
+#### 2.2.1 Raspberry PI GPIO
 Please note Raspberry PI works with 3.3V whereas XY41xx works with 5V. For this 
 reason you cannot conect Raspberry to XY41xx directly (this would destroy 
 your Raspberry). You will need following transistor interface:  
@@ -57,7 +57,7 @@ If you have Raspberry verion 1 use following printer creation:
 In case of Raspberry version 2 use:  
 `PRINTER *prn = pr_create_printer(GPIO, "2");`  
    
-#### PC Parallel port
+#### 2.2.2 PC Parallel port
 Currently there is available connection through parallel port with 
 following configuration:
 
@@ -73,13 +73,13 @@ GND     18 ------------------ 6 ----------- 6 ----------- 6     GND
 ```
   
 For Linux PC use:  
-`PRINTER *prn = pr_create_printer(PARPORT, "/dev/parport0")`  
+`PRINTER *prn = pr_create_printer(PARPORT, "/dev/parport0");`  
   
 FreeBSD PC use:  
-`PRINTER *prn = pr_create_printer(PARPORT, "/dev/ppi0")`  
+`PRINTER *prn = pr_create_printer(PARPORT, "/dev/ppi0");`  
   
 DOS PC use:  
-`PRINTER *prn = pr_create_printer(PARPORT, "0x378")`  
+`PRINTER *prn = pr_create_printer(PARPORT, "0x378");`  
   
 ## 3 Usage
 
@@ -141,7 +141,7 @@ See main.c for more examples.
 See graph.h, text.h and hpgl.h for complete set of available functions.  
 
 
-## 4 Layered architecture
+## 4 Architecture
 
 In order to be PlotterController well extensible it is layered into following 
 logical parts:
@@ -191,11 +191,12 @@ support for HPGL and so on.
 Client program (or application) works directly with Basic Graphics library and 
 with special graphics modules (text, HPGL).
 
-
-## 5 Contact
-Project website:	http://xy4150.webstones.cz/  
-Author:			jaroslav.beran@gmail.com  
+## 5 Youtube
 
 [![Alt text for your video](https://img.youtube.com/vi/rBLfUTozy2g/0.jpg)](http://www.youtube.com/watch?v=rBLfUTozy2g)
   
 [![Alt text for your video](https://img.youtube.com/vi/3A5FSUkz8Y8/0.jpg)](http://www.youtube.com/watch?v=3A5FSUkz8Y8)
+
+## 6 Contact
+Project website:	http://xy4150.webstones.cz/  
+Author:			jaroslav.beran@gmail.com  
