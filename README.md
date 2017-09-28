@@ -1,5 +1,5 @@
 # PlotterController
-Program for controlling XY41xx plotters 
+Program for controlling XY41xx plotters.
 
 ## 1 Introduction
 
@@ -13,30 +13,31 @@ in C programming language with focus on portability and extensibility.
 ### 2.1 Currently supported hardware
 
 #### 2.1.1 Raspberry PI -> GPIO -> XY41xx
-Please note Raspberry PI works with 3.3V whereas XY41xx works with 5V. For this 
-reason you cannot conect Raspberry directly to XY41xx (this would destroy 
-your Raspberry) - see below. 
+Raspberry PI works with 3.3V whereas XY41xx works with 5V. For this 
+reason you cannot conect Raspberry directly to XY41xx - this would destroy 
+your Raspberry. See below how to connect.
 
 #### 2.1.2 Linux PC -> /dev/parportx -> XY41xx
-You only need to make sure you have rights for reading from and writing to 
+You only need to make sure you have permission for reading from and writing to 
 /dev/parportx device.
 
 #### 2.1.3 FreeBSD PC -> /dev/ppix -> XY41xx
-Also here you only need to make sure you have rights for reading from and 
+Also here you only need to make sure you have permission for reading from and 
 writing to /dev/ppix device.
 
-#### 2.1.4 FreeDOS -> LPTx -> XY41xx
+#### 2.1.4 DOS -> LPTx -> XY41xx
 This port is tested well with Borland Turbo C 2.01 which is available for free:  
+  
 http://edn.embarcadero.com/article/20841
 
- * use turbo c and file PLOTTER.PRJ located in src directory
- * make sure font1.fnt is present in the same direcroty a PLOTTER.EXE
- * this should be working in any kind of DOS OS
+ * use turbo c and file PLOTTER.PRJ which is located in src directory
+ * make sure font1.fnt is present in the same direcroty as PLOTTER.EXE
+ * this should be working with any kind of DOS OS
 
 #### 2.1.5 MS Windows -> LPTx -> XY41xx
 This port is not tested well. In some versions of Winows OS you need 
 additional software (such as userport or porttalk22) for enabling direct access 
-to LPTx ports. See following link:
+to LPTx ports. See following links:  
   
 http://hw-server.com/parallel-port-lpt-ieee-1284#xp  
 http://www.drdobbs.com/184409876  
@@ -45,10 +46,10 @@ http://www.drdobbs.com/184409876
 ### 2.2 Currently supported interfaces
 
 #### 2.2.1 Raspberry PI GPIO
-Please note Raspberry PI works with 3.3V whereas XY41xx works with 5V. For this 
-reason you cannot conect Raspberry to XY41xx directly (this would destroy 
-your Raspberry). You will need following transistor interface:  
-
+Raspberry PI works with 3.3V whereas XY41xx works with 5V. For this 
+reason you cannot conect Raspberry to XY41xx directly - this would destroy 
+your Raspberry. You will need following transistor interface:  
+  
 ![RPi interface](doc/rpi_if.png)
   
 If you have Raspberry verion 1 use following printer creation:  
@@ -85,11 +86,11 @@ DOS PC use:
 
 ### 3.1 Project build
 
-For build of project follow these steps:
+For building of project follow these steps:
 
 * Download project and extract it into directory PlotterController
-* Go into directory (cd PlotterController)
-* Run make (it will produce plotter_controller executable file)
+* Go into project directory (cd PlotterController)
+* Run make (this will produce plotter_controller executable file)
 * Run plotter_controller and try demos
 
 
@@ -137,8 +138,8 @@ int main(int argc, char **argv) {
 }
 ```
 
-See main.c for more examples.  
-See graph.h, text.h and hpgl.h for complete set of available functions.  
+See main.c file for more examples.  
+See graph.h, text.h and hpgl.h for complete set of functions available.  
 
 
 ## 4 Architecture
@@ -169,15 +170,15 @@ new interface this layer is right place for it.
 
 ### 4.2 Printer Layer
 
-Printer layer implements concrete plotter. If you want to add support for 
+Printer layer implements particular plotter. If you want to add support for 
 another device you should do it at this layer.
 
 
 ### 4.3 Graph Layer
 
 Graph layer implements basic support for graphics drawing. You can implement 
-new basic drawing features here such as new graphical primitives, line types
-and so on.
+new basic drawing features such as new graphical primitives, line types
+and so on here.
 
 
 ### 4.4 Special Graph Layer
@@ -193,10 +194,10 @@ with special graphics modules (text, HPGL).
 
 ## 5 Youtube
 
-[![Alt text for your video](https://img.youtube.com/vi/rBLfUTozy2g/0.jpg)](http://www.youtube.com/watch?v=rBLfUTozy2g)
+[![RPi is drawing](https://img.youtube.com/vi/rBLfUTozy2g/0.jpg)](http://www.youtube.com/watch?v=rBLfUTozy2g)
   
-[![Alt text for your video](https://img.youtube.com/vi/3A5FSUkz8Y8/0.jpg)](http://www.youtube.com/watch?v=3A5FSUkz8Y8)
+[![RPi is typing](https://img.youtube.com/vi/3A5FSUkz8Y8/0.jpg)](http://www.youtube.com/watch?v=3A5FSUkz8Y8)
 
 ## 6 Contact
 Project website:	http://xy4150.webstones.cz/  
-Author:			jaroslav.beran@gmail.com  
+E-Mail:			jaroslav.beran@gmail.com  
