@@ -1,68 +1,67 @@
-PlotterController
+# PlotterController
 Program for controlling XY41xx plotters 
-=======================================
 
-1 Introduction
---------------
+## 1 Introduction
+
 The aim of PlotterController project is to develop portable controlling 
 program for XY41xx plotters and other small plotters. Project is written 
 in C programming language with focus on portability and extensibility.
 
 
-2 Hardware supported
---------------------
+## 2 Hardware supported
 
-2.1 Currently supported hardware
---------------------------------
-* Raspberry PI -> GPIO -> XY41xx
+### 2.1 Currently supported hardware
+
+#### Raspberry PI -> GPIO -> XY41xx
 Please note Raspberry PI works with 3.3V whereas XY41xx works with 5V. For this 
 reason you cannot conect Raspberry directly to XY41xx (this would destroy 
 your Raspberry). Instead you will need transistor interface which you can find 
 at following page: http://xy4150.webstones.cz/
 
-* Linux PC -> /dev/parportx -> XY41xx
+#### Linux PC -> /dev/parportx -> XY41xx
 You only need to make sure you have rights for reading from and writing to 
 /dev/parportx device.
 
-* FreeBSD PC -> /dev/ppix -> XY41xx
+#### FreeBSD PC -> /dev/ppix -> XY41xx
 Also here you only need to make sure you have rights for reading from and 
 writing to /dev/ppix device.
 
-* FreeDOS -> LPTx -> XY41xx
-This port is tested well with Borland Turbo C 2.01 which is available for free:
+#### FreeDOS -> LPTx -> XY41xx
+This port is tested well with Borland Turbo C 2.01 which is available for free:  
 http://edn.embarcadero.com/article/20841
 
- - use turbo c and file PLOTTER.PRJ located in src directory
- - make sure font1.fnt is present in the same direcroty a PLOTTER.EXE
- - this should be working in any kind of DOS OS
+ * use turbo c and file PLOTTER.PRJ located in src directory
+ * make sure font1.fnt is present in the same direcroty a PLOTTER.EXE
+ * this should be working in any kind of DOS OS
 
-* MS Windows -> LPTx -> XY41xx
+#### MS Windows -> LPTx -> XY41xx
 This port is not tested well. In some versions of Winows OS you need 
 additional software (such as userport or porttalk22) for enabling direct access 
 to LPTx ports. See following link:
+  
+http://hw-server.com/parallel-port-lpt-ieee-1284#xp  
+http://www.drdobbs.com/184409876  
 
-http://hw-server.com/parallel-port-lpt-ieee-1284#xp
-http://www.drdobbs.com/184409876
 
+### 2.2 Currently supported interfaces
 
-2.2 Currently supported interfaces
-----------------------------------
-* Raspberry PI GPIO
+#### Raspberry PI GPIO
 Please note Raspberry PI works with 3.3V whereas XY41xx works with 5V. For this 
 reason you cannot conect Raspberry to XY41xx directly (this would destroy 
 your Raspberry). Instead you will need transistor interface which you can find 
-at following page: http://xy4150.webstones.cz/
-
-If you have Raspberry verion 1 use following printer creation:
-PRINTER *prn = pr_create_printer(GPIO, "1");
-
-In case of Raspberry version 2 use:
-PRINTER *prn = pr_create_printer(GPIO, "2");
- 
-* PC Parallel port
+at following page: http://xy4150.webstones.cz/  
+  
+If you have Raspberry verion 1 use following printer creation:  
+`PRINTER *prn = pr_create_printer(GPIO, "1");`  
+  
+In case of Raspberry version 2 use:  
+`PRINTER *prn = pr_create_printer(GPIO, "2");`  
+   
+#### PC Parallel port
 Currently there is available connection through parallel port with 
 following configuration:
 
+```
                                 PLOTTER
      PC-printer port       XY4131        XY4140        XY4150
 bit 2    4 ------------------ 1 ----------- 1 ----------- 1     PEN
@@ -71,35 +70,36 @@ bit 1    3 ------------------ 3 ----------- 3 ----------- 3     X/Y
 bit 0    2 ------------------ 4 ----------- 4 ----------- 4     +/-
 bit 4    6 ------------------ 5 ----------- 5 ----------- 5     READY
 GND     18 ------------------ 6 ----------- 6 ----------- 6     GND
+```
+  
+For Linux PC use:  
+`PRINTER *prn = pr_create_printer(PARPORT, "/dev/parport0")`  
+  
+FreeBSD PC use:  
+`PRINTER *prn = pr_create_printer(PARPORT, "/dev/ppi0")`  
+  
+DOS PC use:  
+`PRINTER *prn = pr_create_printer(PARPORT, "0x378")`  
+  
+## 3 Usage
 
-For Linux PC use:
-PRINTER *prn = pr_create_printer(PARPORT, "/dev/parport0")
+### 3.1 Project build
 
-FreeBSD PC use:
-PRINTER *prn = pr_create_printer(PARPORT, "/dev/ppi0")
-
-DOS PC use:
-PRINTER *prn = pr_create_printer(PARPORT, "0x378")
-
-3 Usage
--------
-
-3.1 Project build
------------------
 For build of project follow these steps:
 
-- Download project and extract it into directory PlotterController
-- Go into directory (cd PlotterController)
-- Run make (it will produce plotter_controller executable file)
-- Run plotter_controller and try demos
+* Download project and extract it into directory PlotterController
+* Go into directory (cd PlotterController)
+* Run make (it will produce plotter_controller executable file)
+* Run plotter_controller and try demos
 
 
-3.2 Programming
----------------
-Plotter controller works as C library supporting drawing functions.
+### 3.2 Programming
 
+Plotter controller works as C library supporting drawing functions.  
+  
 Example of usage:
 
+```c
 #include <stdio.h>
 #include "printer.h"
 #include "graph.h"
@@ -135,16 +135,18 @@ int main(int argc, char **argv) {
 	pr_close_printer(prn);
 	return 0;
 }
+```
 
-See main.c for more examples.
-See graph.h, text.h and hpgl.h for complete set of available functions.
+See main.c for more examples.  
+See graph.h, text.h and hpgl.h for complete set of available functions.  
 
 
-4 Layered architecture
-----------------------
+## 4 Layered architecture
+
 In order to be PlotterController well extensible it is layered into following 
 logical parts:
 
+```
 +---+--------------------+
 | 5 | Client program     |
 +---+------+------+------+
@@ -156,42 +158,40 @@ logical parts:
 +---+---------+------+---+
 | 1 | Parport | GPIO |...|
 +---+---------+------+---+
+```
 
+### 4.1 Interface Layer
 
-4.1 Interface Layer
--------------------
 Interface layer currently implements parallel port and GPIO I/O. It depends on 
 Operating System and computer platform used. If you want to add support for 
 new interface this layer is right place for it.
 
 
-4.2 Printer Layer
------------------
+### 4.2 Printer Layer
+
 Printer layer implements concrete plotter. If you want to add support for 
 another device you should do it at this layer.
 
 
-4.3 Graph Layer
----------------
+### 4.3 Graph Layer
+
 Graph layer implements basic support for graphics drawing. You can implement 
 new basic drawing features here such as new graphical primitives, line types
 and so on.
 
 
-4.4 Special Graph Layer
------------------------
+### 4.4 Special Graph Layer
+
 This layer implements special graphics modules like support for text drawing,
 support for HPGL and so on.
 
 
-4.5 Client program
-------------------
+### 4.5 Client program
+
 Client program (or application) works directly with Basic Graphics library and 
 with special graphics modules (text, HPGL).
 
 
-5 Contact
----------
-Project website:	http://xy4150.webstones.cz/
-Author:			Jaroslav Beran (jaroslav.beran@gmail.com)
-
+## 5 Contact
+Project website:	http://xy4150.webstones.cz/  
+Author:			jaroslav.beran@gmail.com  
