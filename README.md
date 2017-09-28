@@ -48,8 +48,9 @@ http://www.drdobbs.com/184409876
 #### Raspberry PI GPIO
 Please note Raspberry PI works with 3.3V whereas XY41xx works with 5V. For this 
 reason you cannot conect Raspberry to XY41xx directly (this would destroy 
-your Raspberry). Instead you will need transistor interface which you can find 
-at following page: http://xy4150.webstones.cz/  
+your Raspberry). You will need following transistor interface:  
+
+![RPi interface](doc/rpi_if.png)
   
 If you have Raspberry verion 1 use following printer creation:  
 `PRINTER *prn = pr_create_printer(GPIO, "1");`  
