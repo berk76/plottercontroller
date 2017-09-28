@@ -195,3 +195,7 @@ with special graphics modules (text, HPGL).
 ## 5 Contact
 Project website:	http://xy4150.webstones.cz/  
 Author:			jaroslav.beran@gmail.com  
+
+[![Alt text for your video](https://img.youtube.com/vi/rBLfUTozy2g/0.jpg)](http://www.youtube.com/watch?v=rBLfUTozy2g)
+  
+[![Alt text for your video](https://img.youtube.com/vi/3A5FSUkz8Y8/0.jpg)](http://www.youtube.com/watch?v=3A5FSUkz8Y8)
