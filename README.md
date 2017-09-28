@@ -15,8 +15,7 @@ in C programming language with focus on portability and extensibility.
 #### Raspberry PI -> GPIO -> XY41xx
 Please note Raspberry PI works with 3.3V whereas XY41xx works with 5V. For this 
 reason you cannot conect Raspberry directly to XY41xx (this would destroy 
-your Raspberry). Instead you will need transistor interface which you can find 
-at following page: http://xy4150.webstones.cz/
+your Raspberry) - see below. 
 
 #### Linux PC -> /dev/parportx -> XY41xx
 You only need to make sure you have rights for reading from and writing to 
