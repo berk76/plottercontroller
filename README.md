@@ -88,11 +88,10 @@ DOS PC use:
 
 For building of project follow these steps:
 
-* Download project and extract it into directory PlotterController
-* Go into project directory (cd PlotterController)
-* Run make (this will produce plotter_controller executable file)
-* Run plotter_controller and try demos
-
+  1. Download project `git clone https://github.com/berk76/plottercontroller PlotterController`
+  1. Go into project directory `cd PlotterController`
+  1. Run `make`
+  1. Find and run plotter_controller file and try demos
 
 ### 3.2 Programming
 
