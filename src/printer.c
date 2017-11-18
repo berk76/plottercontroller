@@ -24,7 +24,7 @@
 #define MAX_Y 1850
 
 /*
-*	usleep macro
+*	usleep macro (parameter are micro-seconds)
 */
 
 #if defined(__linux__) || defined(__FreeBSD__) 
@@ -43,7 +43,7 @@ extern void usleep_win (long usec);
 #endif
 
 /*
- *	Speed value is sleep interval in ms
+ *	Speed value is sleep interval in micro-seconds
  *	There are 10 values (0 slow 9 fast)
  */
 static int speed[] = {2600,2400,2200,2000,1800,1600,1400,1200,1000,800};
