@@ -213,5 +213,5 @@ with special graphics modules (text, HPGL).
 [![RPi is typing](https://img.youtube.com/vi/3A5FSUkz8Y8/0.jpg)](http://www.youtube.com/watch?v=3A5FSUkz8Y8)
 
 ## 7 Contact
-Project website:	http://xy4150.webstones.cz/  
+Project website:	https://github.com/berk76/plottercontroller/wiki  
 E-Mail:			jaroslav.beran@gmail.com  
