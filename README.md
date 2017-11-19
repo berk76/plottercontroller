@@ -153,7 +153,7 @@ int main(int argc, char **argv) {
 ```
 
 See main.c file for more examples.  
-See graph.h, text.h and hpgl.h for complete set of functions available.  
+See [API documentation](https://github.com/berk76/plottercontroller/wiki/API) for complete set of functions available.  
 
 
 ## 5 Architecture
