@@ -185,26 +185,29 @@ new interface this layer is right place for it.
 ### 5.2 Printer Layer
 
 Printer layer implements particular plotter. If you want to add support for 
-another device you should do it at this layer.
+another device you should do it at this layer.  
+[See API for more info...](https://github.com/berk76/plottercontroller/wiki/API#3-printer)
 
 
 ### 5.3 Graph Layer
 
 Graph layer implements basic support for graphics drawing. You can implement 
 new basic drawing features such as new graphical primitives, line types
-and so on here.
+and so on here.  
+[See API for more info...](https://github.com/berk76/plottercontroller/wiki/API#4-graph)
 
 
 ### 5.4 Special Graph Layer
 
 This layer implements special graphics modules like support for text drawing,
-support for HPGL and so on.
-
+support for HPGL and so on.  
+[See API for more info...](https://github.com/berk76/plottercontroller/wiki/API#5-text)
 
 ### 5.5 Client program
 
-Client program (or application) works directly with Basic Graphics library and 
+Client program (or application) works directly with basic graphics library and 
 with special graphics modules (text, HPGL).
+
 
 ## 6 Youtube
 
