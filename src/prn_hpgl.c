@@ -53,7 +53,7 @@ int main(int argc, char **argv) {
                 return -1;
         }
 
-        hpgl_draw_from_file(prn, file_name);
+        hpgl_draw_from_file(prn, argv[2]);
 
         return 0;
 }

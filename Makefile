@@ -14,12 +14,14 @@
 CFLAGS = -O2 -Wall -c -o $@
 objects = src/graph.o src/printer.o src/par_port.o src/gpio_port.o src/gpio_io.o src/text.o src/hpgl.o
 
-plotter_controller: ${objects}
+all: plotter_controller prn_hpgl
+
+plotter_controller: src/main.o ${objects}
 	$(CC) -Wall -o $@ src/main.o ${objects} -lm
 	cp var/font1.fnt ./font1.fnt
 
-prn_hpgl: ${objects}
-	$(CC) -Wall -o $@ src/prn_hpgl.o ${objects}
+prn_hpgl: src/prn_hpgl.o ${objects}
+	$(CC) -Wall -o $@ src/prn_hpgl.o ${objects} -lm
 
 prn_hpgl.o: src/prn_hpgl.c src/main.h src/printer.h src/hpgl.h 
 main.o: src/main.c src/main.h src/graph.h src/printer.h src/text.h src/hpgl.h
@@ -32,5 +34,5 @@ text.o: src/text.c src/text.h src/graph.h src/printer.h
 hpgl.o: src/hpgl.c src/hpgl.h src/graph.h src/printer.h
 
 clean:
-	rm -f ${objects} src/*.bak plotter_controller plotter_controller.exe prn_hpgl prn_hpgl.exe *.bak *.fnt
+	rm -f src/*.o src/*.bak plotter_controller plotter_controller.exe prn_hpgl prn_hpgl.exe *.bak *.fnt
 

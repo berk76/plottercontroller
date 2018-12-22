@@ -34,7 +34,8 @@ your Raspberry. See below how to connect.
 
 #### 3.1.2 Linux PC -> /dev/parportx -> XY41xx
 You only need to make sure you have permission for reading from and writing to 
-/dev/parportx device.
+/dev/parportx device. If you cannot see /dev/parport0 you can try run:
+$ sudo modprobe ppdev
 
 #### 3.1.3 FreeBSD PC -> /dev/ppix -> XY41xx
 Also here you only need to make sure you have permission for reading from and 
