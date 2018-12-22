@@ -6,3 +6,5 @@
 *.res
 plotter_controller
 prn_hpgl
+./font1.fnt
+
