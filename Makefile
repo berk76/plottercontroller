@@ -18,7 +18,7 @@ all: plotter_controller prn_hpgl
 
 plotter_controller: src/main.o ${objects}
 	$(CC) -Wall -o $@ src/main.o ${objects} -lm
-	cp var/font1.fnt ./font1.fnt
+	cp var/font1.tfnt ./font1.fnt
 
 prn_hpgl: src/prn_hpgl.o ${objects}
 	$(CC) -Wall -o $@ src/prn_hpgl.o ${objects} -lm

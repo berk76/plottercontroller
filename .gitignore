@@ -4,7 +4,6 @@
 *.o
 *.exe
 *.res
+*.fnt
 plotter_controller
 prn_hpgl
-./font1.fnt
-
