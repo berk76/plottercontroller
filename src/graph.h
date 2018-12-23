@@ -1,33 +1,37 @@
 /*
 *       graph.h
-*       
+*
 *       This file is part of PlotterController project.
 *       https://github.com/berk76/plottercontroller
-*       
+*
 *       PlotterController is free software; you can redistribute it and/or modify
 *       it under the terms of the GNU General Public License as published by
 *       the Free Software Foundation; either version 3 of the License, or
 *       (at your option) any later version. <http://www.gnu.org/licenses/>
-*       
-*       Written by Jaroslav Beran <jaroslav.beran@gmail.com>, on 10.1.2014  
+*
+*       Written by Jaroslav Beran <jaroslav.beran@gmail.com>, on 10.1.2014
 */
 
 
 #ifndef _GRAPH_H
 #define _GRAPH_H
 
+
 typedef struct {
-	double x;
-	double y;
+        double x;
+        double y;
 } D_POSITION;
 
+
 #ifndef M_PI
-#define M_PI		3.14159265358979323846	/* pi */
+#define M_PI            3.14159265358979323846  /* pi */
 #endif
 
+
 #ifndef M_PI_2
-#define M_PI_2		1.57079632679489661923	/* pi/2 */
+#define M_PI_2          1.57079632679489661923  /* pi/2 */
 #endif
+
 
 /* Move Absolute */
 extern void xy_ma(PRINTER *p, int x, int y);

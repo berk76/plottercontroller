@@ -1,15 +1,15 @@
 /*
 *       gpio_port.c
-*       
+*
 *       This file is part of PlotterController project.
 *       https://github.com/berk76/plottercontroller
-*       
+*
 *       PlotterController is free software; you can redistribute it and/or modify
 *       it under the terms of the GNU General Public License as published by
 *       the Free Software Foundation; either version 3 of the License, or
 *       (at your option) any later version. <http://www.gnu.org/licenses/>
-*       
-*       Written by Jaroslav Beran <jaroslav.beran@gmail.com>, on 12.10.2015  
+*
+*       Written by Jaroslav Beran <jaroslav.beran@gmail.com>, on 12.10.2015
 */
 
 
@@ -99,6 +99,6 @@ void gpio_set_ready(int i) {
 
 
 int gpio_is_ready() {
-	return gpio_read(GPIO_GET_READY);
+        return gpio_read(GPIO_GET_READY);
 }
 

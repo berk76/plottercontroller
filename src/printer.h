@@ -1,20 +1,21 @@
 /*
 *       printer.h
-*       
+*
 *       This file is part of PlotterController project.
 *       https://github.com/berk76/plottercontroller
-*       
+*
 *       PlotterController is free software; you can redistribute it and/or modify
 *       it under the terms of the GNU General Public License as published by
 *       the Free Software Foundation; either version 3 of the License, or
 *       (at your option) any later version. <http://www.gnu.org/licenses/>
-*       
-*       Written by Jaroslav Beran <jaroslav.beran@gmail.com>, on 10.1.2014  
+*
+*       Written by Jaroslav Beran <jaroslav.beran@gmail.com>, on 10.1.2014
 */
 
 
 #ifndef _PRINTER_H
 #define _PRINTER_H
+
 
 /* Type of interface */
 typedef enum {
@@ -22,11 +23,13 @@ typedef enum {
         GPIO
 } interface_t;
 
+
 /* Pen */
 typedef enum {
         UP   = 0,
         DOWN = 1
 } value_pen_t;
+
 
 /* Motor X/Y */
 typedef enum {
@@ -34,11 +37,13 @@ typedef enum {
         PAPER = 1
 } value_xy_t;
 
+
 /* Direction */
 typedef enum {
         BACKWARD = 0,
         FORWARD  = 1
 } value_direction_t;
+
 
 /* Ready */
 typedef enum {
@@ -46,22 +51,24 @@ typedef enum {
         NOREADY = 1
 } value_ready_t;
 
+
 /* Position */
 typedef struct {
-	int    x;
-	int    y;
+        int    x;
+        int    y;
 } POSITION;
+
 
 /* Printer */
 typedef struct {
-	POSITION               max_position;
-	POSITION               curr_position;
-	POSITION               origin_position;
-	POSITION               moving_buffer;
-	POSITION               virtual_position;
-	int                    virtual_pen;
-	int                    out_of_limits;
-	int                    velocity;
+        POSITION               max_position;
+        POSITION               curr_position;
+        POSITION               origin_position;
+        POSITION               moving_buffer;
+        POSITION               virtual_position;
+        int                    virtual_pen;
+        int                    out_of_limits;
+        int                    velocity;
         int                    (*close)();
         void                   (*set_pen)(int);
         void                   (*set_step)(int);
@@ -75,9 +82,9 @@ typedef struct {
 
 
 /*
-*	Create printer instance
-*	
-*	Linux
+*       Create printer instance
+*
+*       Linux
 *       pr_create_printer(PARPORT, "/dev/parport0")
 *       FreeBSD
 *       pr_create_printer(PARPORT, "/dev/ppi0")
@@ -91,59 +98,58 @@ typedef struct {
 extern PRINTER *pr_create_printer(interface_t i, char *param);
 
 /*
-*	Close printer instance
+*       Close printer instance
 */
 extern void pr_close_printer(PRINTER *p);
 
 /*
-*	Init printer
+*       Init printer
 */
 extern void pr_init(PRINTER *p);
 
 /*
-*	Returns max position;
+*       Returns max position;
 */
 extern POSITION pr_get_max_position(PRINTER *p);
 
-
 /*
-*	Returns current POSITION;
+*       Returns current POSITION;
 */
 extern POSITION pr_get_current_position(PRINTER *p);
 
 /*
-*	Returns origin POSITION;
+*       Returns origin POSITION;
 */
 extern POSITION pr_get_origin_position(PRINTER *p);
 
 /*
-*	Set origin POSITION;
+*       Set origin POSITION;
 */
 extern void pr_set_origin_position(PRINTER *p, int x, int y);
 
 /*
-*	Returns moving buffer;
+*       Returns moving buffer;
 */
 extern POSITION pr_get_moving_buffer(PRINTER *p);
 
 /*
-*	Set moving buffer;
+*       Set moving buffer;
 */
 extern void pr_set_moving_buffer(PRINTER *p, int x, int y);
 
 /*
-*	Set velocity (0-9)
+*       Set velocity (0-9)
 */
 extern void pr_set_velocity(PRINTER *p, int v);
 
 /*
-*	Set pen
+*       Set pen
 */
 extern void pr_pen(PRINTER *p, value_pen_t value);
 
 /*
-*	Move
-*	repeat		1 step = 0.1 mm
+*       Move
+*       repeat          1 step = 0.1 mm
 */
 extern void pr_move(PRINTER *p, value_xy_t xy, value_direction_t direction, int repeat);
 

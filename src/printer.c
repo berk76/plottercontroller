@@ -1,15 +1,15 @@
 /*
 *       printer.c
-*       
+*
 *       This file is part of PlotterController project.
 *       https://github.com/berk76/plottercontroller
-*       
+*
 *       PlotterController is free software; you can redistribute it and/or modify
 *       it under the terms of the GNU General Public License as published by
 *       the Free Software Foundation; either version 3 of the License, or
 *       (at your option) any later version. <http://www.gnu.org/licenses/>
-*       
-*       Written by Jaroslav Beran <jaroslav.beran@gmail.com>, on 10.1.2014  
+*
+*       Written by Jaroslav Beran <jaroslav.beran@gmail.com>, on 10.1.2014
 */
 
 
@@ -23,8 +23,9 @@
 #define MAX_X 2600
 #define MAX_Y 1850
 
+
 /*
-*	usleep macro (parameter are micro-seconds)
+*       usleep macro (parameter are micro-seconds)
 */
 
 #if defined(__linux__) || defined(__FreeBSD__) 
@@ -43,10 +44,11 @@ extern void usleep_win (long usec);
 #endif
 
 /*
- *	Speed value is sleep interval in micro-seconds
- *	There are 10 values (0 slow 9 fast)
+ *      Speed value is sleep interval in micro-seconds
+ *      There are 10 values (0 slow 9 fast)
  */
 static int speed[] = {2600,2400,2200,2000,1800,1600,1400,1200,1000,800};
+
 
 static void dirty_pen(PRINTER *p, value_pen_t value);
 static int is_ready(PRINTER *p);
@@ -57,10 +59,10 @@ static void sync_virt_curr_position(PRINTER *p);
 
 
 /*
-*	Create printer instance
+*       Create printer instance
 */
 PRINTER *pr_create_printer(interface_t i, char *param) {
-	PRINTER *result;
+        PRINTER *result;
 
         result = (PRINTER *) malloc(sizeof(PRINTER));
         
@@ -96,280 +98,280 @@ PRINTER *pr_create_printer(interface_t i, char *param) {
                         result->is_ready = &gpio_is_ready;
                         break;
                 default:
-			fprintf(stderr, "Invalid interface %d\n", i);
+                        fprintf(stderr, "Invalid interface %d\n", i);
                         exit(1);
-        }	
+        }
 
-	result->max_position.x = MAX_X;
-	result->max_position.y = MAX_Y;
-	result->curr_position.x = 0;
-	result->curr_position.y = 0;
-	result->origin_position.x = 0;
-	result->origin_position.y = 0;
-	result->moving_buffer.x = 0;
-	result->moving_buffer.y = 0;
-	result->virtual_position.x = 0;
-	result->virtual_position.y = 0;
-	result->virtual_pen = UP;
-	result->out_of_limits = 0;
-	result->velocity = 8;
+        result->max_position.x = MAX_X;
+        result->max_position.y = MAX_Y;
+        result->curr_position.x = 0;
+        result->curr_position.y = 0;
+        result->origin_position.x = 0;
+        result->origin_position.y = 0;
+        result->moving_buffer.x = 0;
+        result->moving_buffer.y = 0;
+        result->virtual_position.x = 0;
+        result->virtual_position.y = 0;
+        result->virtual_pen = UP;
+        result->out_of_limits = 0;
+        result->velocity = 8;
 
-	return result;
+        return result;
 }
 
 
 /*
-*	Close printer instance
+*       Close printer instance
 */
 void pr_close_printer(PRINTER *p) {
-	if (p != NULL) {
+        if (p != NULL) {
                 p->close();
-		free((void *) p);
-		p = NULL;
-	}
+                free((void *) p);
+                p = NULL;
+        }
 }
 
 
 /*
-*	Init printer
+*       Init printer
 */
 void pr_init(PRINTER *p) {
         p->set_ready(NOREADY);
-	p->set_xy(CART);
-	p->set_step(1);
+        p->set_xy(CART);
+        p->set_step(1);
         p->set_plus_minus(BACKWARD);
-	USLEEP(speed[p->velocity]);
+        USLEEP(speed[p->velocity]);
 
 
-	if (!is_ready(p)) {
-		int i;
-		while (!is_ready(p)) {
-			dirty_step(p);
-		}
+        if (!is_ready(p)) {
+                int i;
+                while (!is_ready(p)) {
+                        dirty_step(p);
+                }
 
                 p->set_plus_minus(FORWARD);
-		for (i = 0; i < 50; i++) {
-			dirty_step(p);
-		}
-	}
+                for (i = 0; i < 50; i++) {
+                        dirty_step(p);
+                }
+        }
 }
 
 
 /*
-*	Returns max position;
+*       Returns max position;
 */
 POSITION pr_get_max_position(PRINTER *p) {
-	return p->max_position;
+        return p->max_position;
 }
 
 
 /*
-*	Returns current position;
+*       Returns current position;
 */
 POSITION pr_get_current_position(PRINTER *p) {
-	POSITION result;
-	result.x =  p->virtual_position.x;
-	result.y =  p->virtual_position.y;
-	result.x -= p->origin_position.x;
-	result.y -= p->origin_position.y;
-	result.x += p->moving_buffer.x; 
-	result.y += p->moving_buffer.y;
-	return result;
+        POSITION result;
+        result.x =  p->virtual_position.x;
+        result.y =  p->virtual_position.y;
+        result.x -= p->origin_position.x;
+        result.y -= p->origin_position.y;
+        result.x += p->moving_buffer.x; 
+        result.y += p->moving_buffer.y;
+        return result;
 }
 
 
 /*
-*	Returns origin position;
+*       Returns origin position;
 */
 POSITION pr_get_origin_position(PRINTER *p) {
-	return p->origin_position;
+        return p->origin_position;
 }
 
 
 /*
-*	Set origin position;
+*       Set origin position;
 */
 void pr_set_origin_position(PRINTER *p, int x, int y) {
-	p->origin_position.x = x;
-	p->origin_position.y = y;
+        p->origin_position.x = x;
+        p->origin_position.y = y;
 }
 
 
 /*
-*	Returns moving buffer;
+*       Returns moving buffer;
 */
 POSITION pr_get_moving_buffer(PRINTER *p) {
-	return p->moving_buffer;
+        return p->moving_buffer;
 }
 
 
 /*
-*	Set moving buffer;
+*       Set moving buffer;
 */
 void pr_set_moving_buffer(PRINTER *p, int x, int y) {
-	p->moving_buffer.x = x;
-	p->moving_buffer.y = y;
+        p->moving_buffer.x = x;
+        p->moving_buffer.y = y;
 }
 
 
 /*
-*	Set velocity (0-9)
+*       Set velocity (0-9)
 */
 void pr_set_velocity(PRINTER *p, int v) {
-	if ((v >= 0) && (v < 10)) {
-		p->velocity = v;
-	}
+        if ((v >= 0) && (v < 10)) {
+                p->velocity = v;
+        }
 }
 
 
 /*
-*	Set pen
+*       Set pen
 */
 void pr_pen(PRINTER *p, value_pen_t value) {
-	if (p->virtual_pen != value) {
-		p->virtual_pen = value;
-		if (!p->out_of_limits) dirty_pen(p, value);
-	}
+        if (p->virtual_pen != value) {
+                p->virtual_pen = value;
+                if (!p->out_of_limits) dirty_pen(p, value);
+        }
 }
 
 
 /*
-*	Set dirty pen
+*       Set dirty pen
 */
 static void dirty_pen(PRINTER *p, value_pen_t value) {
         p->set_pen(value);
-	USLEEP(speed[p->velocity] * 10);
+        USLEEP(speed[p->velocity] * 10);
 }
 
 
 /*
-*	Move
-*	xy		0 = CART (Y), 1 = PAPER (X)
-*	direction	0 = TO LEFT (FORWARD), 1 = TO RIGHT (BACK)
-*	repeat		1 step = 0.1 mm
+*       Move
+*       xy              0 = CART (Y), 1 = PAPER (X)
+*       direction       0 = TO LEFT (FORWARD), 1 = TO RIGHT (BACK)
+*       repeat          1 step = 0.1 mm
 */
 void pr_move(PRINTER *p, value_xy_t xy, value_direction_t direction, int repeat) {
         p->set_xy(xy);
         p->set_plus_minus(direction);
-	step(p, repeat);
+        step(p, repeat);
 }
 
 
 /*
-*	Is ready test
+*       Is ready test
 */
 static int is_ready(PRINTER *p) {
 
         p->set_ready(READY);
-	USLEEP(speed[p->velocity]);
+        USLEEP(speed[p->velocity]);
 
-	p->set_ready(NOREADY);
-	USLEEP(speed[p->velocity]);
-                
-	return (p->is_ready() == READY);
+        p->set_ready(NOREADY);
+        USLEEP(speed[p->velocity]);
+
+        return (p->is_ready() == READY);
 }
 
 
 /*
-*	Do step
+*       Do step
 */
 static void step(PRINTER *p, int repeat) {
-	int step_dir;
-	int i;
+        int step_dir;
+        int i;
 
-	step_dir = (p->is_plus_minus() == BACKWARD) ? -1 : 1;
-	for (i = 0; i < repeat; i++) {
-		
-		if (p->is_xy() == CART) {
-			p->virtual_position.y += step_dir;
-			if (!check_cross_limits(p) && !p->out_of_limits) {
-				p->curr_position.y += step_dir;
-				dirty_step(p);
-			}
-		} else {
-			p->virtual_position.x += step_dir;
-			if (!check_cross_limits(p) && !p->out_of_limits) {
-				p->curr_position.x += step_dir;
-				dirty_step(p);
-			}
-		}
-	}
+        step_dir = (p->is_plus_minus() == BACKWARD) ? -1 : 1;
+        for (i = 0; i < repeat; i++) {
+
+                if (p->is_xy() == CART) {
+                        p->virtual_position.y += step_dir;
+                        if (!check_cross_limits(p) && !p->out_of_limits) {
+                                p->curr_position.y += step_dir;
+                                dirty_step(p);
+                        }
+                } else {
+                        p->virtual_position.x += step_dir;
+                        if (!check_cross_limits(p) && !p->out_of_limits) {
+                                p->curr_position.x += step_dir;
+                                dirty_step(p);
+                        }
+                }
+        }
 }
 
 
 /*
-*	Perform dirty step
+*       Perform dirty step
 */
 static void dirty_step(PRINTER *p) {
-	p->set_step(0);
-	USLEEP(speed[p->velocity]);
-	p->set_step(1);
-	USLEEP(speed[p->velocity]);
+        p->set_step(0);
+        USLEEP(speed[p->velocity]);
+        p->set_step(1);
+        USLEEP(speed[p->velocity]);
 }
 
 
 /*
-*	Check cross limits
+*       Check cross limits
 */
 static int check_cross_limits(PRINTER *p) {
-	int previous;
-	int current;
+        int previous;
+        int current;
 
-	previous = p->out_of_limits;
-	current = (p->virtual_position.x > p->max_position.x) 
-			|| (p->virtual_position.x < 0)
-			|| (p->virtual_position.y > p->max_position.y)
-			|| (p->virtual_position.y < 0);
+        previous = p->out_of_limits;
+        current = (p->virtual_position.x > p->max_position.x) 
+                        || (p->virtual_position.x < 0)
+                        || (p->virtual_position.y > p->max_position.y)
+                        || (p->virtual_position.y < 0);
 
-	if (previous < current) {
-		p->out_of_limits = 1;
-		dirty_pen(p, UP);
-		return 1;
-	}
+        if (previous < current) {
+                p->out_of_limits = 1;
+                dirty_pen(p, UP);
+                return 1;
+        }
 
-	if (previous > current) {
-		p->out_of_limits = 0;
-		sync_virt_curr_position(p);
-		return 1;
-	}
+        if (previous > current) {
+                p->out_of_limits = 0;
+                sync_virt_curr_position(p);
+                return 1;
+        }
 
-	return 0;
+        return 0;
 }
 
 
 /*
-*	Move
-*	xy		0 = CART (Y), 1 = PAPER (X)
-*	direction	0 = TO LEFT (FORWARD), 1 = TO RIGHT (BACK)
-*	repeat		1 step = 0.1 mm
+*       Move
+*       xy              0 = CART (Y), 1 = PAPER (X)
+*       direction       0 = TO LEFT (FORWARD), 1 = TO RIGHT (BACK)
+*       repeat          1 step = 0.1 mm
 */
 static void sync_virt_curr_position(PRINTER *p) {
-	int i, xy, plus_minus;
+        int i, xy, plus_minus;
 
-	xy = p->is_xy();
+        xy = p->is_xy();
         plus_minus = p->is_plus_minus();
-        
 
-	if (p->curr_position.x != p->virtual_position.x) {
+
+        if (p->curr_position.x != p->virtual_position.x) {
                 p->set_xy(PAPER);
                 p->set_plus_minus((p->curr_position.x < p->virtual_position.x) ? FORWARD : BACKWARD);
-		for (i = 0; i < abs(p->virtual_position.x - p->curr_position.x); i++) {
-			dirty_step(p);
-		}
-		p->curr_position.x = p->virtual_position.x;
-	}
+                for (i = 0; i < abs(p->virtual_position.x - p->curr_position.x); i++) {
+                        dirty_step(p);
+                }
+                p->curr_position.x = p->virtual_position.x;
+        }
 
-	if (p->curr_position.y != p->virtual_position.y) {
-		p->set_xy(CART);
+        if (p->curr_position.y != p->virtual_position.y) {
+                p->set_xy(CART);
                 p->set_plus_minus((p->curr_position.y < p->virtual_position.y) ? FORWARD : BACKWARD);
-		for (i = 0; i < abs(p->virtual_position.y - p->curr_position.y); i++) {
-			dirty_step(p);
-		}
-		p->curr_position.y = p->virtual_position.y;
-	}
+                for (i = 0; i < abs(p->virtual_position.y - p->curr_position.y); i++) {
+                        dirty_step(p);
+                }
+                p->curr_position.y = p->virtual_position.y;
+        }
 
-	p->set_xy(xy);
-	p->set_plus_minus(plus_minus);
-	dirty_pen(p, p->virtual_pen);
+        p->set_xy(xy);
+        p->set_plus_minus(plus_minus);
+        dirty_pen(p, p->virtual_pen);
 }
 
