@@ -7,13 +7,13 @@ Program for controlling XY41xx plotters.
   * [2 Introduction](#2-introduction)
   * [3 Hardware supported](#3-hardware-supported)
     * [3.1 Currently supported hardware](#31-currently-supported-hardware)
-    * [3.2 Currently supported interfaces](#32-currently-supported-interfaces)
+    * [3.2 Interfaces](#32-interfaces)
   * [4 Usage](#4-usage)
     * [4.1 Building of project](#41-building-of-project)
-    * [4.2 Programming](#42-programming)
+    * [4.2 Drawing HPGL files](#42-drawing-hpgl-files)
+    * [4.3 Programming](#43-programming)
   * [5 Architecture](#5-architecture)
-  * [6 Youtube](#6-youtube)
-  * [7 Contact](#7-contact)  
+  * [6 Contact](#6-contact)
 
 
 ## 2 Introduction
@@ -22,6 +22,10 @@ The aim of PlotterController project is to develop portable controlling
 program for XY41xx plotters and other small plotters. Project is written 
 in C programming language with focus on portability and extensibility.
 
+[![RPi is drawing](https://img.youtube.com/vi/rBLfUTozy2g/0.jpg)](http://www.youtube.com/watch?v=rBLfUTozy2g)
+  
+[![RPi is typing](https://img.youtube.com/vi/3A5FSUkz8Y8/0.jpg)](http://www.youtube.com/watch?v=3A5FSUkz8Y8)
+
 
 ## 3 Hardware supported
 
@@ -29,16 +33,19 @@ in C programming language with focus on portability and extensibility.
 
 #### 3.1.1 Raspberry PI -> GPIO -> XY41xx
 Raspberry PI works with 3.3V whereas XY41xx works with 5V. For this 
-reason you cannot conect Raspberry directly to XY41xx - this would destroy 
-your Raspberry. See below how to connect.
+reason you cannot conect Raspberry directly to XY41xx - this would damage 
+your Raspberry. See below how to connect it.
 
 #### 3.1.2 Linux PC -> /dev/parportx -> XY41xx
 You only need to make sure you have permission for reading from and writing to 
 /dev/parportx device. If you cannot see /dev/parport0 you can try run:
+
+```
 $ sudo modprobe ppdev
+```
 
 #### 3.1.3 FreeBSD PC -> /dev/ppix -> XY41xx
-Also here you only need to make sure you have permission for reading from and 
+Again you only need to make sure you have permission for reading from and 
 writing to /dev/ppix device.
 
 #### 3.1.4 DOS -> LPTx -> XY41xx
@@ -51,7 +58,7 @@ http://edn.embarcadero.com/article/20841
  * this should be working with any kind of DOS OS
 
 #### 3.1.5 MS Windows -> LPTx -> XY41xx
-This port is not tested well. In some versions of Winows OS you need 
+This port is not supported yet. In some versions of Winows OS you need 
 additional software (such as userport or porttalk22) for enabling direct access 
 to LPTx ports. See following links:  
   
@@ -59,7 +66,7 @@ http://hw-server.com/parallel-port-lpt-ieee-1284#xp
 http://www.drdobbs.com/184409876  
 
 
-### 3.2 Currently supported interfaces
+### 3.2 Interfaces
 
 #### 3.2.1 Raspberry PI GPIO
 Raspberry PI works with 3.3V whereas XY41xx works with 5V. For this 
@@ -75,7 +82,7 @@ In case of Raspberry version 2 use:
 `PRINTER *prn = pr_create_printer(GPIO, "2");`  
    
 #### 3.2.2 PC Parallel port
-Currently there is available connection through parallel port with 
+There is also available connection through parallel port with 
 following configuration:
 
 ```
@@ -107,11 +114,34 @@ For building of project follow these steps:
   1. Download project `git clone https://github.com/berk76/plottercontroller PlotterController`
   1. Go into project directory `cd PlotterController`
   1. Run `make`
-  1. Find and run plotter_controller file and try demos
+  1. Find following binaries: `plotter_controller`, `prn_hpgl`
+  1. You can run `plotter_controller` and try demos or you can draw hpgl files using `prn_hpgl`  
 
-### 4.2 Programming
+### 4.2 Drawing HPGL files
 
-Plotter controller works as C library supporting drawing functions.  
+Now you can draw any HPGL file using `prn_hpgl` command.
+
+```
+Usage:
+prn_hpgl <interface number> <file.hpgl>
+
+Interface numbers available:
+(1) Linux PC (/dev/parport0)
+(2) FreeBSD PC (/dev/ppi0)
+(3) DOS PC (0x378)
+(4) Raspberry PI version 1 (GPIO v1)
+(5) Raspberry PI version 2 (GPIO v2)
+```
+
+For example if you have plotter connected through parallel port to Linux you can run:
+
+ ```
+ $ ./prn_hpgl 1 hpgl_examples/kuzeloid.hpgl
+ ```
+
+### 4.3 Programming
+
+Plotter controller is implemented as C library supporting drawing functions.  
   
 Example of usage:
 
@@ -209,13 +239,6 @@ support for HPGL and so on.
 Client program (or application) works directly with basic graphics library and 
 with special graphics modules (text, HPGL).
 
-
-## 6 Youtube
-
-[![RPi is drawing](https://img.youtube.com/vi/rBLfUTozy2g/0.jpg)](http://www.youtube.com/watch?v=rBLfUTozy2g)
-  
-[![RPi is typing](https://img.youtube.com/vi/3A5FSUkz8Y8/0.jpg)](http://www.youtube.com/watch?v=3A5FSUkz8Y8)
-
-## 7 Contact
-Project website:	https://github.com/berk76/plottercontroller/wiki  
-E-Mail:			jaroslav.beran@gmail.com  
+## 6 Contact
+See project [Wiki](https://github.com/berk76/plottercontroller/wiki)  
+E-Mail:	jaroslav.beran@gmail.com  
