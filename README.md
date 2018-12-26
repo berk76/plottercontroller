@@ -123,7 +123,7 @@ Now you can draw any HPGL file using `prn_hpgl` command.
 
 ```
 Usage:
-prn_hpgl <interface number> <file.hpgl>
+prn_hpgl [-s <scale factor>] -i <interface number> -f <file.hpgl>
 
 Interface numbers available:
 (1) Linux PC (/dev/parport0)
@@ -136,7 +136,7 @@ Interface numbers available:
 For example if you have plotter connected through parallel port to Linux you can run:
 
  ```
- $ ./prn_hpgl 1 hpgl_examples/kuzeloid.hpgl
+ $ ./prn_hpgl -i 1 -f hpgl_examples/kuzeloid.hpgl
  ```
 
 ### 4.3 Programming

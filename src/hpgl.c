@@ -36,11 +36,14 @@ static int getParamAsInt(char *cmd, int which);
 
 
 /* Draw hpgl file */
-void hpgl_draw_from_file(PRINTER *p, char *file_name) {
+void hpgl_draw_from_file(PRINTER *p, char *file_name, double scale_factor) {
         FILE *fr;
         char c;
         char cmd[MAX_CMD_LEN + 1];
         int len;
+
+
+        scale = scale_factor; 
 
         if ((fr = fopen(file_name, "r")) == NULL) {
                 printf("Error: Cannot open file %s for reading\n", file_name);

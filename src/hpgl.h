@@ -18,7 +18,7 @@
 
 
 /* Draw hpgl file */
-extern void hpgl_draw_from_file(PRINTER *p, char *file_name);
+extern void hpgl_draw_from_file(PRINTER *p, char *file_name, double scale_factor);
 
 
 #endif

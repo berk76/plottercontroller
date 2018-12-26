@@ -14,6 +14,7 @@
 
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "printer.h"
 #include "hpgl.h"
 #include "main.h"
@@ -23,16 +24,54 @@ static void print_help();
 
 
 int main(int argc, char **argv) {
-        int c;
         PRINTER *prn;
+        int i;
+        char *val = NULL;
+        char sw;
 
-        if (argc != 3) {
+        double scale = 1;
+        char *file = NULL;
+        char interface = ' ';
+
+        for (i = (argc - 1); i != 0; i--) {
+
+                if (argv[i][0] != '-') {
+                        val = argv[i];
+                        continue;
+                }
+
+                sw = argv[i][1];
+
+                switch (sw) {
+                        case 's' :
+                                        if (val != NULL) {
+                                                scale = atof(val);
+                                                val = NULL;
+                                        }
+                                        break;
+                        case 'i' :
+                                        if (val != NULL) {
+                                                interface = *val;
+                                                val = NULL;
+                                        }
+                                        break;
+                        case 'f' :
+                                        if (val != NULL) {
+                                                file = val;
+                                                val = NULL;
+                                        }
+                                        break;
+                        default :
+                                fprintf(stderr, "Unknown option %c\n", i);
+                }
+        }
+
+        if ((file == NULL) || (interface == ' ') || (scale == 0) || (scale < 0)) {
                 print_help();
                 return -1;
         }
 
-        c = *(argv[1]);
-        switch (c) {
+        switch (interface) {
                 case '1' :      prn = pr_create_printer(PARPORT, "/dev/parport0");
                                 break;
                 case '2' :      prn = pr_create_printer(PARPORT, "/dev/ppi0");
@@ -53,7 +92,7 @@ int main(int argc, char **argv) {
                 return -1;
         }
 
-        hpgl_draw_from_file(prn, argv[2]);
+        hpgl_draw_from_file(prn, argv[2], scale);
 
         return 0;
 }
@@ -63,7 +102,7 @@ void print_help() {
         printf("prn_hpgl version %s\n\n", PLOTTER_CONTROLLER_VERSION);
 
         printf("Usage:\n");
-        printf("prn_hpgl <interface number> <file.hpgl>\n\n");
+        printf("prn_hpgl [-s <scale factor>] -i <interface number> -f <file.hpgl>\n\n");
 
         printf("Interface numbers available:\n");
         printf("(1) Linux PC (/dev/parport0)\n");
