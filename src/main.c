@@ -375,5 +375,5 @@ static void hpgl_demo(PRINTER *prn) {
         printf("Enter HPGL file name: ");
         scanf("%99s", file_name);
         while (getchar() != '\n');
-        hpgl_draw_from_file(prn, file_name);
+        hpgl_draw_from_file(prn, file_name, 1.0);
 }

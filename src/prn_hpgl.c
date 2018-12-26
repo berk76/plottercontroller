@@ -92,7 +92,7 @@ int main(int argc, char **argv) {
                 return -1;
         }
 
-        hpgl_draw_from_file(prn, argv[2], scale);
+        hpgl_draw_from_file(prn, file, scale);
 
         return 0;
 }
