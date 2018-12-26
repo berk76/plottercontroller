@@ -53,6 +53,10 @@ void hpgl_draw_from_file(PRINTER *p, char *file_name) {
 
         while ((c = getc(fr)) != EOF) {
 
+                if (c < ' ') {
+                        continue;
+                }
+
                 if ((c == ';') || (strlen(cmd) == MAX_CMD_LEN)) {
                         process_cmd(p, cmd);
                         *cmd = '\0';
