@@ -67,6 +67,7 @@ void hpgl_draw_from_file(PRINTER *p, char *file_name, double scale_factor) {
                 }
 
                 if (c == ';') {
+                        printf("%s;\n",cmd);
                         process_cmd(p, cmd);
                         *cmd = '\0';
                         len = 0;
@@ -211,13 +212,16 @@ static void hpgl_pu(PRINTER *p, char *cmd) {
         i = 0;
 
         while (1) {
-                x = scale * (double) getParamAsInt(cmd, i++);
-                y = scale * (double) getParamAsInt(cmd, i++);
+                x = getParamAsInt(cmd, i++);
+                y = getParamAsInt(cmd, i++);
 
-                if (y < 0) {
+                if (y == -1) {
                         return;
                 } else {
-                        xy_mr(p, x, y);
+                        x = scale * (double) x;
+                        y = scale * (double) y;
+                        /* printf(">%d,%d\n", x, y); */
+                        xy_ma(p, x, y);
                 }
         }
 }
@@ -231,13 +235,16 @@ static void hpgl_pd(PRINTER *p, char *cmd) {
         i = 0;
 
         while (1) {
-                x = scale * (double) getParamAsInt(cmd, i++);
-                y = scale * (double) getParamAsInt(cmd, i++);
+                x = getParamAsInt(cmd, i++);
+                y = getParamAsInt(cmd, i++);
 
-                if (y < 0) {
+                if (y == -1) {
                         return;
                 } else {
-                        xy_vr(p, x, y);
+                        x = scale * (double) x;
+                        y = scale * (double) y;
+                        /* printf(">%d,%d\n", x, y); */
+                        xy_va(p, x, y);
                 }
         }
 }
