@@ -28,6 +28,8 @@ static double scale = 1;
 static void process_cmd(PRINTER *p, char *cmd);
 static void hpgl_pa(PRINTER *p, char *cmd);
 static void hpgl_pr(PRINTER *p, char *cmd);
+static void hpgl_pu(PRINTER *p, char *cmd);
+static void hpgl_pd(PRINTER *p, char *cmd);
 static void hpgl_ci(PRINTER *p, char *cmd);
 static int getParamAsInt(char *cmd, int which);
 
@@ -99,11 +101,11 @@ static void process_cmd(PRINTER *p, char *cmd) {
                 return;
         }
         if (!strncmp(cmd, "PU", 2)) {
-                pen = 0;
+                hpgl_pu(p, cmd);
                 return;
         }
         if (!strncmp(cmd, "PD", 2)) {
-                pen = 1;
+                hpgl_pd(p, cmd);
                 return;
         }
         if (!strncmp(cmd, "EA", 2)) {
@@ -201,6 +203,46 @@ static void hpgl_pr(PRINTER *p, char *cmd) {
 }
 
 
+/* Pen Up */
+static void hpgl_pu(PRINTER *p, char *cmd) {
+        int x, y, i;
+
+        pen = 0;
+        i = 0;
+
+        while (1) {
+                x = scale * (double) getParamAsInt(cmd, i++);
+                y = scale * (double) getParamAsInt(cmd, i++);
+
+                if (y < 0) {
+                        return;
+                } else {
+                        xy_mr(p, x, y);
+                }
+        }
+}
+
+
+/* Pen Down */
+static void hpgl_pd(PRINTER *p, char *cmd) {
+        int x, y, i;
+
+        pen = 1;
+        i = 0;
+
+        while (1) {
+                x = scale * (double) getParamAsInt(cmd, i++);
+                y = scale * (double) getParamAsInt(cmd, i++);
+
+                if (y < 0) {
+                        return;
+                } else {
+                        xy_vr(p, x, y);
+                }
+        }
+}
+
+
 /* Circle */
 static void hpgl_ci(PRINTER *p, char *cmd) {
         int r;
@@ -232,5 +274,5 @@ static int getParamAsInt(char *cmd, int which) {
                 p++;
         }
 
-        return 0;
+        return -1;
 }
