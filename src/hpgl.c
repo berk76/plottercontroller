@@ -20,9 +20,6 @@
 #include "graph.h"
 
 
-#define MAX_CMD_LEN 50
-
-
 /* pen up = 0, down = 1 */
 static int pen = 0;
 static double scale = 1;
@@ -39,11 +36,18 @@ static int getParamAsInt(char *cmd, int which);
 void hpgl_draw_from_file(PRINTER *p, char *file_name, double scale_factor) {
         FILE *fr;
         char c;
-        char cmd[MAX_CMD_LEN + 1];
+        char *cmd;
+        int maxlen = 50;
         int len;
 
 
-        scale = scale_factor; 
+        scale = scale_factor;
+
+        cmd = (char *) malloc(sizeof(char) * (maxlen + 1));
+        if (cmd == NULL) {
+                fprintf(stderr, "Could not allocate memory\n");
+                exit(-1);
+        } 
 
         if ((fr = fopen(file_name, "r")) == NULL) {
                 printf("Error: Cannot open file %s for reading\n", file_name);
@@ -60,7 +64,7 @@ void hpgl_draw_from_file(PRINTER *p, char *file_name, double scale_factor) {
                         continue;
                 }
 
-                if ((c == ';') || (strlen(cmd) == MAX_CMD_LEN)) {
+                if (c == ';') {
                         process_cmd(p, cmd);
                         *cmd = '\0';
                         len = 0;
@@ -68,10 +72,20 @@ void hpgl_draw_from_file(PRINTER *p, char *file_name, double scale_factor) {
                         strncat(cmd, &c, 1);
                         len++;
                 }
+
+                if (strlen(cmd) == maxlen) {
+                        maxlen = maxlen * 2;
+                        cmd = (char *) realloc(cmd, sizeof(char) * (maxlen + 1));
+                        if (cmd == NULL) {
+                                fprintf(stderr, "Could not allocate memory\n");
+                                exit(-1);
+                        } 
+                }
         }
 
         fclose(fr);
         xy_hm(p);
+        free((void *) cmd);
 }
 
 
