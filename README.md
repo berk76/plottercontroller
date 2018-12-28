@@ -163,6 +163,8 @@ or you can pipeline output directly to `prn_hpgl`:
 $ ./fit_hpgl -x 2500 -y 1750 -f hpgl_examples/kuzeloid.hpgl | ./prn_hpgl -i 1 
 ```
 
+You can find more HPGL pictures and examples at [cygnus.speccy.cz ...](https://cygnus.speccy.cz/popis_printer-aritma0507_2.php) 
+
 ### 4.3 Programming
 
 Plotter controller is implemented as C library supporting drawing functions.  
