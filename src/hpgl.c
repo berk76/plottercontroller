@@ -51,9 +51,13 @@ void hpgl_draw_from_file(PRINTER *p, char *file_name, double scale_factor) {
                 exit(-1);
         } 
 
-        if ((fr = fopen(file_name, "r")) == NULL) {
-                printf("Error: Cannot open file %s for reading\n", file_name);
-                return;
+        if (file_name == NULL) {
+                fr = stdin;
+        } else {
+                if ((fr = fopen(file_name, "r")) == NULL) {
+                        printf("Error: Cannot open file %s for reading\n", file_name);
+                        return;
+                }
         }
 
         pr_init(p);
@@ -86,7 +90,10 @@ void hpgl_draw_from_file(PRINTER *p, char *file_name, double scale_factor) {
                 }
         }
 
-        fclose(fr);
+        if (fr != stdin) {
+                fclose(fr);
+        }
+
         xy_hm(p);
         free((void *) cmd);
 }
