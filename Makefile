@@ -14,7 +14,7 @@
 CFLAGS = -O2 -Wall -c -o $@
 objects = src/graph.o src/printer.o src/par_port.o src/gpio_port.o src/gpio_io.o src/text.o src/hpgl.o
 
-all: plotter_controller prn_hpgl
+all: plotter_controller prn_hpgl fit_hpgl
 
 plotter_controller: src/main.o ${objects}
 	$(CC) -Wall -o $@ src/main.o ${objects} -lm
@@ -22,6 +22,9 @@ plotter_controller: src/main.o ${objects}
 
 prn_hpgl: src/prn_hpgl.o ${objects}
 	$(CC) -Wall -o $@ src/prn_hpgl.o ${objects} -lm
+
+fit_hpgl: src/fit_hpgl.o
+	$(CC) -Wall -o $@ src/fit_hpgl.o -lm
 
 prn_hpgl.o: src/prn_hpgl.c src/main.h src/printer.h src/hpgl.h 
 main.o: src/main.c src/main.h src/graph.h src/printer.h src/text.h src/hpgl.h
@@ -32,7 +35,8 @@ gpio_port.o: src/gpio_port.c src/gpio_port.h src/gpio_io.h
 gpio_io.o: src/gpio_io.c src/gpio_io.h
 text.o: src/text.c src/text.h src/graph.h src/printer.h
 hpgl.o: src/hpgl.c src/hpgl.h src/graph.h src/printer.h
+fit_hpgl.o: src/fit_hpgl.c src/main.h
 
 clean:
-	rm -f src/*.o src/*.bak plotter_controller plotter_controller.exe prn_hpgl prn_hpgl.exe *.bak *.fnt
+	rm -f src/*.o src/*.bak plotter_controller prn_hpgl fit_hpgl *.exe *.bak *.fnt
 

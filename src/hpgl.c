@@ -67,7 +67,7 @@ void hpgl_draw_from_file(PRINTER *p, char *file_name, double scale_factor) {
                 }
 
                 if (c == ';') {
-                        printf("%s;\n",cmd);
+                        /* printf("%s;\n",cmd); */
                         process_cmd(p, cmd);
                         *cmd = '\0';
                         len = 0;
