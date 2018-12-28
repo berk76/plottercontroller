@@ -139,6 +139,30 @@ For example if you have plotter connected through parallel port to Linux you can
  $ ./prn_hpgl -i 1 -f hpgl_examples/kuzeloid.hpgl
  ```
 
+If you have HPGL file which doesn't match drawing size of your plotter you can use `fit_hpgl` command to resize it:
+
+```
+Usage:
+fit_hpgl [-i] -x <new x size> -y <new y size> -f <file.hpgl>
+
+-i  print info only
+-f  input file
+-x  new x size
+-y  new y size
+```
+
+Using this utility you can convert HPGL file and resize it to match provided size and save it to file:
+
+```
+$ ./fit_hpgl -x 2500 -y 1750 -f hpgl_examples/kuzeloid.hpgl > saved.hpgl 
+```
+
+or you can pipeline output directly to `prn_hpgl`:
+
+```
+$ ./fit_hpgl -x 2500 -y 1750 -f hpgl_examples/kuzeloid.hpgl | ./prn_hpgl -i 1 
+```
+
 ### 4.3 Programming
 
 Plotter controller is implemented as C library supporting drawing functions.  
