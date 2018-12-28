@@ -66,7 +66,7 @@ int main(int argc, char **argv) {
                 }
         }
 
-        if ((file == NULL) || (interface == ' ') || (scale == 0) || (scale < 0)) {
+        if ((interface == ' ') || (scale == 0) || (scale < 0)) {
                 print_help();
                 return -1;
         }
