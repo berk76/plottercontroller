@@ -25,9 +25,9 @@ static int info = 0;
 static void examine(char *file_name, int *px, int *py);
 static void get_size_cmd(char *cmd, int *px, int *py);
 static void get_size(char *cmd, int *px, int *py);
-static void write(char *file_name, double scale, int flip);
-static void write_cmd(char *cmd, double scale, int flip);
-static void resize(char *cmd, double scale, int flip);
+static void write(char *file_name, double scale, int flip, int xmax);
+static void write_cmd(char *cmd, double scale, int flip, int xmax);
+static void resize(char *cmd, double scale, int flip, int xmax);
 static void resize_ci(char *cmd, double scale);
 static int getParamAsInt(char *cmd, int which);
 static void swap(int *a, int *b);
@@ -116,7 +116,7 @@ int main(int argc, char **argv) {
                         printf(" and flip image");
                 printf("\n");
         } else {
-                write(file, f1, flip);
+                write(file, f1, flip, nx);
         }
 
         return 0;
@@ -226,7 +226,7 @@ void get_size(char *cmd, int *px, int *py) {
 }
 
 
-static void write(char *file_name, double scale, int flip) {
+static void write(char *file_name, double scale, int flip, int xmax) {
         FILE *fr;
         char c;
         char *cmd;
@@ -256,7 +256,7 @@ static void write(char *file_name, double scale, int flip) {
 
                 if (c == ';') {
                         /* printf("%s;\n",cmd); */
-                        write_cmd(cmd, scale, flip);
+                        write_cmd(cmd, scale, flip, xmax);
                         *cmd = '\0';
                         len = 0;
                 } else {
@@ -279,21 +279,21 @@ static void write(char *file_name, double scale, int flip) {
 }
 
 
-void write_cmd(char *cmd, double scale, int flip) {
+void write_cmd(char *cmd, double scale, int flip, int xmax) {
         if (!strncmp(cmd, "PA", 2)) {
-                resize(cmd, scale, flip);
+                resize(cmd, scale, flip, xmax);
                 return;
         }
         if (!strncmp(cmd, "PR", 2)) {
-                resize(cmd, scale, flip);
+                resize(cmd, scale, flip, xmax);
                 return;
         }
         if (!strncmp(cmd, "PU", 2)) {
-                resize(cmd, scale, flip);
+                resize(cmd, scale, flip, xmax);
                 return;
         }
         if (!strncmp(cmd, "PD", 2)) {
-                resize(cmd, scale, flip);
+                resize(cmd, scale, flip, xmax);
                 return;
         }
         if (!strncmp(cmd, "CI", 2)) {
@@ -305,7 +305,7 @@ void write_cmd(char *cmd, double scale, int flip) {
 }
 
 
-void resize(char *cmd, double scale, int flip) {
+void resize(char *cmd, double scale, int flip, int xmax) {
         int x, y, i;
 
         i = 0;
@@ -323,8 +323,10 @@ void resize(char *cmd, double scale, int flip) {
                 } else {
                         x = scale * (double) x;
                         y = scale * (double) y;
-                        if (flip)
+                        if (flip) {
                                 swap(&x, &y);
+                                x = -1 * (x - xmax);
+                        }
 
                         if (i > 2)
                                 putchar(',');
