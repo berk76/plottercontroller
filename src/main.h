@@ -16,6 +16,6 @@
 #ifndef _MAIN_H
 #define _MAIN_H
 
-#define PLOTTER_CONTROLLER_VERSION "Snapshot 0.3.0"
+#define PLOTTER_CONTROLLER_VERSION "Version 0.3.0"
 
 #endif
