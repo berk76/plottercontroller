@@ -86,13 +86,17 @@ typedef struct {
 *
 *       Linux
 *       pr_create_printer(PARPORT, "/dev/parport0")
+*
 *       FreeBSD
 *       pr_create_printer(PARPORT, "/dev/ppi0")
+*
 *       DOS
 *       pr_create_printer(PARPORT, "0x378")
-*       RPi v1
+*
+*       Raspberry Pi, Pi Zero, Pi Zero W and Compute Module
 *       pr_create_printer(GPIO, "1")
-*       RPi v2
+*
+*       Raspberry Pi 2, Pi 3 and Compute Module 3
 *       pr_create_printer(GPIO, "2")
 */
 extern PRINTER *pr_create_printer(interface_t i, char *param);

@@ -10,7 +10,9 @@ typedef enum {
 
 /*********************************************************************
  * Perform initialization to access GPIO registers:
- * Sets up pointer ugpio.
+ * Sets up pointer ugpio
+ * 1 = Raspberry Pi, Pi Zero, Pi Zero W and Compute Module
+ * 2 = Raspberry Pi 2, Pi 3 and Compute Module 3
  *********************************************************************/
 extern void gpio_init(int version);
     
@@ -34,4 +36,3 @@ extern inline int gpio_read(int gpio);
  * Mastering the Raspberry Pi - ISBN13: 978-1-484201-82-4
  * This source code is placed into the public domain.
  *********************************************************************/
- 

@@ -44,8 +44,8 @@ int main(void) {
         printf("1) Linux PC (/dev/parport0)\n");
         printf("2) FreeBSD PC (/dev/ppi0)\n");
         printf("3) DOS PC (0x378)\n");
-        printf("4) Raspberry PI version 1 (GPIO v1)\n");
-        printf("5) Raspberry PI version 2 (GPIO v2)\n\n");
+        printf("4) Raspberry Pi, Pi Zero, Pi Zero W and Compute Module\n");
+        printf("5) Raspberry Pi 2, Pi 3 and Compute Module 3\n\n");
 
         c = getchar();
         while (getchar() != '\n');

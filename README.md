@@ -75,10 +75,10 @@ your Raspberry. You will need following transistor interface:
   
 ![RPi interface](doc/rpi_if.png)
   
-If you have Raspberry verion 1 use following printer creation:  
+If you have Raspberry Pi, Pi Zero, Pi Zero W or Compute Module use following printer creation:  
 `PRINTER *prn = pr_create_printer(GPIO, "1");`  
   
-In case of Raspberry version 2 use:  
+In case of Raspberry Pi 2, Pi 3 and Compute Module 3 use:  
 `PRINTER *prn = pr_create_printer(GPIO, "2");`  
    
 #### 3.2.2 PC Parallel port
@@ -129,8 +129,8 @@ Interface numbers available:
 (1) Linux PC (/dev/parport0)
 (2) FreeBSD PC (/dev/ppi0)
 (3) DOS PC (0x378)
-(4) Raspberry PI version 1 (GPIO v1)
-(5) Raspberry PI version 2 (GPIO v2)
+(4) Raspberry Pi, Pi Zero, Pi Zero W and Compute Module
+(5) Raspberry Pi 2, Pi 3 and Compute Module 3
 ```
 
 For example if you have plotter connected through parallel port to Linux you can run:
