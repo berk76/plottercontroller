@@ -1,4 +1,7 @@
 # PlotterController
+
+![build](https://github.com/berk76/plottercontroller/workflows/build/badge.svg)
+
 Program for controlling XY41xx plotters.
 
 
