@@ -212,6 +212,7 @@ int read_data(int fd, unsigned char *data) {
 */
 
 #ifdef __FreeBSD__
+#include <unistd.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <dev/ppbus/ppi.h>
