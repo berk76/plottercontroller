@@ -37,6 +37,7 @@ static int getParamAsInt(char *cmd, int which);
 /* Draw hpgl file */
 void hpgl_draw_from_file(PRINTER *p, char *file_name, double scale_factor) {
         FILE *fr;
+        int i;
         char c;
         char *cmd;
         int maxlen = 50;
@@ -64,8 +65,9 @@ void hpgl_draw_from_file(PRINTER *p, char *file_name, double scale_factor) {
         *cmd = '\0';
         len = 0;
 
-        while ((c = getc(fr)) != EOF) {
-
+        while ((i = getc(fr)) != EOF) {
+                c = i;
+                
                 if (c < ' ') {
                         continue;
                 }

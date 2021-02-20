@@ -125,6 +125,7 @@ int main(int argc, char **argv) {
 
 void examine(char *file_name, int *px, int *py) {
         FILE *fr;
+        int i;
         char c;
         char *cmd;
         int maxlen = 50;
@@ -145,7 +146,8 @@ void examine(char *file_name, int *px, int *py) {
         *cmd = '\0';
         len = 0;
 
-        while ((c = getc(fr)) != EOF) {
+        while ((i = getc(fr)) != EOF) {
+                c = i;
 
                 if (c < ' ') {
                         continue;
@@ -228,6 +230,7 @@ void get_size(char *cmd, int *px, int *py) {
 
 static void write(char *file_name, double scale, int flip, int xmax) {
         FILE *fr;
+        int i;
         char c;
         char *cmd;
         int maxlen = 50;
@@ -248,8 +251,9 @@ static void write(char *file_name, double scale, int flip, int xmax) {
         *cmd = '\0';
         len = 0;
 
-        while ((c = getc(fr)) != EOF) {
-
+        while ((i = getc(fr)) != EOF) {
+                c = i;
+                
                 if (c < ' ') {
                         continue;
                 }
