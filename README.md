@@ -12,9 +12,10 @@ in C programming language with focus on portability and extensibility.
 
 ## Documentation
 
-* Visit [Project Web](https://berk76.github.io/plottercontroller/) for instructions;
-* See [API documentation](https://github.com/berk76/plottercontroller/wiki/API);
+* Documentation [[cs](docs/cs/index.md)] [[en](docs/en/index.md)]
+* Project [Web](https://berk76.github.io/plottercontroller/)
+* [API](https://github.com/berk76/plottercontroller/wiki/API) reference
 
 ## Support
-Do you have question or idea? Visit [discussion](https://github.com/berk76/plottercontroller/discussions).  
-Contribution is welcome - see [guidelines](CONTRIBUTING.md).  
+* Do you have question or idea? Visit project [discussions](https://github.com/berk76/plottercontroller/discussions).  
+* Contribution is welcome - see [guidelines](CONTRIBUTING.md). 
