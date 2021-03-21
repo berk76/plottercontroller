@@ -1,3 +1,9 @@
+---
+layout: default
+title: PlotterController (cs)
+nav_order: 2
+---
+
 # PlotterController
 
 Ovládací program pro plottery řady XY41xx.

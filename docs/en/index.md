@@ -1,3 +1,9 @@
+---
+layout: default
+title: PlotterController (en)
+nav_order: 3
+---
+
 # PlotterController
 
 Program for controlling XY41xx plotters.
